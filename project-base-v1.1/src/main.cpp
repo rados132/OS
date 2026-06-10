@@ -7,6 +7,5 @@ void main () {
         c = __getc ();
         __putc (c);
     } while (1);
-
-    return 0;
+    
 }
