@@ -21,7 +21,8 @@ MemoryAllocator& MemoryAllocator::get_instance () {
 
 void* MemoryAllocator::k_malloc ( size_t size ) {
     
-    if ( size == 0 ) return nullptr;
+    // check if argument is valid and requested size is not larger then heap size
+    if ( size <= 0 || size > mem_end_addr - mem_start_addr ) return nullptr;
 
     // needed size of memory is requested size + header size aligned up to block size
     size_t needed_size = align_up( size + sizeof( header ) );
@@ -42,7 +43,7 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
         }
     }
 
-    if ( best == nullptr ) return nullptr;  // should never happen
+    if ( best == nullptr ) return nullptr;  // out of memory
 
     size_t remainder_size = best->size - needed_size; // calculate the size of leftover fragment
 
@@ -66,10 +67,40 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
 
     *(( header* ) best ) = needed_size; // write size of allocated block in the header
 
-    return ( void* ) ( ( char* ) best + sizeof ( header ) ); // return address of first byte after header
+    // return the address of first byte after header
+    return ( void* ) ( ( char* ) best + sizeof ( header ) );
 }
 
 int MemoryAllocator::k_free ( void* ptr ) {
+
+    if ( ptr == nullptr ) return 0; // nothing to free
+
+    header* hdr = ( header* ) (( char* ) ptr - sizeof ( header ));
+
+    size_t block_size = *hdr;
+
+    FreeFragment* freed_block = ( FreeFragment* ) hdr;
+
+    FreeFragment* curr = free_mem_head;
+    FreeFragment* prev = nullptr;
+    
+    // find the place of insertion, list is sorted by rising address
+    while ( curr != nullptr && curr < freed_block ) {
+        prev = curr;
+        curr = curr->next;
+    }
+    
+    freed_block->size = block_size;
+    freed_block->next = curr;
+
+    // insert freed block into list
+    if ( prev ) prev->next    = freed_block;
+    else        free_mem_head = freed_block;
+
+    // try to merge with neighbour fragments
+    try_to_merge ( freed_block, curr );
+    try_to_merge ( prev, freed_block );
+
     return 0;
 }
 
@@ -82,4 +113,11 @@ inline constexpr size_t MemoryAllocator::align_down (size_t addr) {
 }
 
 void MemoryAllocator::try_to_merge (FreeFragment* prev, FreeFragment* next) {
+    // check if args are valid
+    if ( prev == nullptr || next == nullptr ) return;
+
+    if ( (( char* ) prev + prev->size ) == ( char* ) next ) {
+        prev->size += next->size;
+        prev->next  = next->next;
+    }
 }
