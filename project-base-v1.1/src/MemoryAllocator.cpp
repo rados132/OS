@@ -2,8 +2,8 @@
 
 MemoryAllocator::MemoryAllocator () {
     // Initialization of the memory allocator
-    mem_start_addr = align_up( ( size_t ) HEAP_START_ADDR );    // Align start addr to block
-    mem_end_addr   = align_down( ( size_t ) HEAP_END_ADDR );    // Align end addr to block
+    mem_start_addr = align_up (( size_t ) HEAP_START_ADDR );    // Align start addr to block
+    mem_end_addr   = align_down (( size_t ) HEAP_END_ADDR );    // Align end addr to block
 
     free_mem_head  = ( FreeFragment* ) mem_start_addr;
 

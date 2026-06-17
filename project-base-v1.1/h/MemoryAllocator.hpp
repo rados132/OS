@@ -19,8 +19,8 @@ public:
     int     k_free   ( void* ptr );
 
 protected:
-  inline constexpr size_t align_up   ( size_t addr );
-  inline constexpr size_t align_down ( size_t addr );
+  static inline constexpr size_t align_up   ( size_t addr );
+  static inline constexpr size_t align_down ( size_t addr );
 
   void try_to_merge (FreeFragment* prev, FreeFragment* next);
 

@@ -1,11 +1,11 @@
+#include "../lib/hw.h"
 #include "../lib/console.h"
+#include "../h/MemoryAllocator.hpp"
 
-void main () {
+extern int memory_allocator_test ( MemoryAllocator& allocator );
 
-    char c;
-    do {
-        c = __getc ();
-        __putc (c);
-    } while (1);
+void main() {
+
+    memory_allocator_test ( MemoryAllocator::get_instance () );
     
 }
