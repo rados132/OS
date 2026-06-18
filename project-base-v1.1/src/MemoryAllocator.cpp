@@ -21,11 +21,11 @@ MemoryAllocator& MemoryAllocator::get_instance () {
 
 void* MemoryAllocator::k_malloc ( size_t size ) {
     
-    // check if argument is valid and requested size is not larger then heap size
-    if ( size <= 0 || size > mem_end_addr - mem_start_addr ) return nullptr;
+    // check if argument is valid and requested size is not larger then size of avaliable memory
+    if ( size <= 0 || size > free_mem_size ) return nullptr;
 
     // needed size of memory is requested size + header size aligned up to block size
-    size_t needed_size = align_up( size + sizeof( header ) );
+    size_t needed_size = align_up ( size + sizeof ( header_t ) );
 
     FreeFragment* prev = nullptr;
     FreeFragment* curr = free_mem_head;
@@ -65,19 +65,23 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
         else             free_mem_head   = best->next;
     }
 
-    *(( header* ) best ) = needed_size; // write size of allocated block in the header
+    free_mem_size -= needed_size;   // update size of free mem
+
+    *(( header_t* ) best ) = needed_size; // write size of allocated block in the header
 
     // return the address of first byte after header
-    return ( void* ) ( ( char* ) best + sizeof ( header ) );
+    return ( void* ) ( ( char* ) best + sizeof ( header_t ) );
 }
 
 int MemoryAllocator::k_free ( void* ptr ) {
 
     if ( ptr == nullptr ) return 0; // nothing to free
 
-    header* hdr = ( header* ) (( char* ) ptr - sizeof ( header ));
+    header_t* hdr = ( header_t* ) (( char* ) ptr - sizeof ( header_t ));
 
     size_t block_size = *hdr;
+
+    free_mem_size += block_size; // update size of free mem
 
     FreeFragment* freed_block = ( FreeFragment* ) hdr;
 
@@ -112,12 +116,12 @@ inline constexpr size_t MemoryAllocator::align_down (size_t addr) {
     return ( addr / MEM_BLOCK_SIZE ) * MEM_BLOCK_SIZE;
 }
 
-void MemoryAllocator::try_to_merge (FreeFragment* prev, FreeFragment* next) {
+void MemoryAllocator::try_to_merge (FreeFragment* prev, FreeFragment* curr) {
     // check if args are valid
-    if ( prev == nullptr || next == nullptr ) return;
+    if ( prev == nullptr || curr == nullptr ) return;
 
-    if ( (( char* ) prev + prev->size ) == ( char* ) next ) {
-        prev->size += next->size;
-        prev->next  = next->next;
+    if ( (( char* ) prev + prev->size ) == ( char* ) curr ) {
+        prev->size += curr->size;
+        prev->next  = curr->next;
     }
 }

@@ -8,7 +8,7 @@ struct FreeFragment {
     FreeFragment* next;
 };
 
-typedef size_t header; // size of allocated block
+typedef size_t header_t; // size of allocated block
 
 class MemoryAllocator {
 public:
