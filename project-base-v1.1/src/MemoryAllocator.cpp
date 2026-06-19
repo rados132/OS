@@ -65,7 +65,7 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
         else             free_mem_head   = best->next;
     }
 
-    free_mem_size -= needed_size;   // update size of free mem
+    free_mem_size -= needed_size; // update size of free mem
 
     *(( header_t* ) best ) = needed_size; // write size of allocated block in the header
 
@@ -108,15 +108,15 @@ int MemoryAllocator::k_free ( void* ptr ) {
     return 0;
 }
 
-inline constexpr size_t MemoryAllocator::align_up (size_t addr) {
+inline constexpr size_t MemoryAllocator::align_up ( size_t addr ) {
     return ( ( addr + MEM_BLOCK_SIZE - 1 ) / MEM_BLOCK_SIZE ) * MEM_BLOCK_SIZE;
 }
 
-inline constexpr size_t MemoryAllocator::align_down (size_t addr) {
+inline constexpr size_t MemoryAllocator::align_down ( size_t addr ) {
     return ( addr / MEM_BLOCK_SIZE ) * MEM_BLOCK_SIZE;
 }
 
-void MemoryAllocator::try_to_merge (FreeFragment* prev, FreeFragment* curr) {
+void MemoryAllocator::try_to_merge ( FreeFragment* prev, FreeFragment* curr ) {
     // check if args are valid
     if ( prev == nullptr || curr == nullptr ) return;
 

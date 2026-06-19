@@ -26,7 +26,7 @@ static void check ( bool ok, const char* tag ) {
 // Velicina zahteva (u bajtovima) koja zauzme TACNO k blokova:
 //   needed = align_up(k*B - header + header) = align_up(k*B) = k*B
 static size_t request_for_blocks ( size_t k ) {
-    return k * MEM_BLOCK_SIZE - sizeof ( header );
+    return k * MEM_BLOCK_SIZE - sizeof ( header_t );
 }
 
 // Poravnata, stvarno upotrebljiva velicina hipa (onako kako je vidi
@@ -43,7 +43,7 @@ static size_t usable_heap_size () {
 // potpuna, alokacija celog hipa ne uspeva i tag pokazuje POSLE kog testa
 // je nastao problem.
 static void assert_heap_whole ( MemoryAllocator& a, const char* tag ) {
-    void* whole = a.k_malloc ( usable_heap_size () - sizeof ( header ) );
+    void* whole = a.k_malloc ( usable_heap_size () - sizeof ( header_t ) );
     check ( whole != nullptr, tag );
     if ( whole ) a.k_free ( whole );
 }
@@ -76,7 +76,7 @@ int memory_allocator_test ( MemoryAllocator& allocator ) {
     // TEST 2: out-of-memory i potpun povracaj -----------------------------
     {
         // Zauzmi ceo hip u jednom bloku.
-        char* big = ( char* ) allocator.k_malloc ( usable_heap_size () - sizeof ( header ) );
+        char* big = ( char* ) allocator.k_malloc ( usable_heap_size () - sizeof ( header_t ) );
         check ( big != nullptr, "T2.alloc_whole" );
 
         // Sad nema vise mesta ni za jedan bajt.
