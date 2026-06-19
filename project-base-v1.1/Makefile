@@ -138,4 +138,7 @@ qemu-gdb: ${KERNEL_IMG} .gdbinit
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
+# prevent deletion of my assembly files
+.PRECIOUS: src/trap_handler.s
+
 -include $(wildcard ${DIR_BUILD}/*.d)

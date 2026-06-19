@@ -11,7 +11,7 @@ void main() {
 
     // memory_allocator_test ( MemoryAllocator::get_instance () );
 
-    RiscV::w_stvec ( ( uint64 ) trap_handler );
+    RiscV::w_stvec ( ( uint64 ) &trap_handler );
 
     __putc ( 'A' );
 
@@ -21,4 +21,6 @@ void main() {
 
     __putc ( '\n' );
     __putc ( '\n' );
+
+    *( ( uint32 * ) 0x100000 ) = 0x5555; // halt the emulator
 }
