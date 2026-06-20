@@ -2,8 +2,8 @@
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/RiscV.hpp"
-#include "../test/tests.hpp"
 #include "../h/syscall_c.hpp"
+#include "../test/tests.hpp"
 
 extern "C" void trap_handler ();
 
@@ -12,8 +12,6 @@ static void printStr ( const char* s ) {
 }
 
 void main () {
-
-    // memory_allocator_test ( MemoryAllocator::get_instance () );
 
     // 1) instaliraj prekidnu rutinu (stvec -> trap_handler)
     RiscV::w_stvec ( ( uint64 ) &trap_handler );

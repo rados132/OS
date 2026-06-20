@@ -1,16 +1,16 @@
 #include "../h/syscall_c.hpp"
 
-uint64 sys_call ( uint64 syscall, uint64 arg1 ) {
+uint64 sys_call ( uint64 syscall, uint64 arg ) {
 
     uint64 ret;
 
     __asm__ volatile (
-        "mv a0, %[code] \n"
-        "mv a1, %[arg1] \n"
+        "mv a0, %[a0] \n"
+        "mv a1, %[a1] \n"
         "ecall          \n"
         "mv %[ret], a0  \n"
         : [ret]  "=r"(ret)
-        : [code] "r"(syscall), [arg1] "r"(arg1)
+        : [a0] "r"(syscall), [a1] "r"(arg)
         : "a0", "a1", "memory"
     );
 
