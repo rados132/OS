@@ -10,7 +10,8 @@ extern "C" void supervisor_trap_handler () {
 
     if ( scause == 0x08 || scause == 0x09 ) {
         // ecall from U-mode or S-mode
-        sepc += 4;
+        
+        sepc += 4; // increment pc to point to next instruction after ecall
 
         uint64 syscall = RiscV::r_user_reg ( A0 );
 

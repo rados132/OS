@@ -8,16 +8,21 @@
  */
 
 
-// memory allocation
+/*
+ *  Memory allocation
+ */ 
 
 void* mem_alloc ( size_t size );
 
 int   mem_free  ( void* ptr );
 
 
-// thread menagement
+/*
+ *  Thread menagement
+ */
 
-class _thread;
+class TCB;
+using _thread = TCB;
 
 typedef _thread* thread_t;
 
