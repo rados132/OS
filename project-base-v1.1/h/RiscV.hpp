@@ -1,5 +1,5 @@
-#ifndef _RISC_V_HPP_
-#define _RISC_V_HPP_
+#ifndef RISC_V_HPP
+#define RISC_V_HPP
 
 #include "../lib/hw.h"
 
