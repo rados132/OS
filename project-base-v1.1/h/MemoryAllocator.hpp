@@ -22,7 +22,7 @@ protected:
   static inline constexpr size_t align_up   ( size_t addr );
   static inline constexpr size_t align_down ( size_t addr );
 
-  void try_to_merge ( FreeFragment* prev, FreeFragment* next );
+  void try_to_merge ( FreeFragment* prev, FreeFragment* curr );
 
 private:
     MemoryAllocator ();

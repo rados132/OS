@@ -79,9 +79,7 @@ int MemoryAllocator::k_free ( void* ptr ) {
 
     header_t* hdr = ( header_t* ) (( char* ) ptr - sizeof ( header_t ));
 
-    size_t block_size = *hdr;
-
-    free_mem_size += block_size; // update size of free mem
+    size_t block_size = *hdr; // get the size of freed block from header
 
     FreeFragment* freed_block = ( FreeFragment* ) hdr;
 
@@ -104,6 +102,8 @@ int MemoryAllocator::k_free ( void* ptr ) {
     // try to merge with neighbour fragments
     try_to_merge ( freed_block, curr );
     try_to_merge ( prev, freed_block );
+
+    free_mem_size += block_size; // update size of free mem
 
     return 0;
 }
