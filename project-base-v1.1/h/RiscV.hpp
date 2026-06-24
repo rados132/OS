@@ -3,6 +3,9 @@
 
 #include "../lib/hw.h"
 
+extern "C" void push_regs ();
+extern "C" void pop_regs  ();
+
 class RiscV {
 public:
     // read reg scause
@@ -76,6 +79,12 @@ public:
 
     // write user reg
     static void   w_user_reg ( uint64 reg, uint64 value );
+
+    // push user regs
+    static void   push_user_regs ();
+
+    // pop user regs
+    static void   pop_user_regs  ();
 
 private:
     // get trap frame pointer
@@ -230,5 +239,13 @@ inline void RiscV::w_user_reg ( uint64 reg, uint64 value ) {
     uint64* trap_frame = get_trap_frame ();
     trap_frame[reg] = value;
 }
+
+inline void RiscV::push_user_regs () {
+    push_regs ();
+} 
+
+inline void RiscV::pop_user_regs () {
+    pop_regs ();
+} 
 
 #endif

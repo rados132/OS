@@ -14,7 +14,12 @@ class TCB {
 public:
     TCB ( thread_body t_body, void* arg, void* stack );
 
+    static void yield ();
+
     static TCB*  running;  // static field indicating the running thread
+
+protected:
+    static void  dispatch ();
 
 private:
     thread_body  body;

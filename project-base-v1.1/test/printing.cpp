@@ -1,7 +1,7 @@
 #include "printing.hpp"
 #include "../lib/console.h"
 
-void print_string(char const *string) {
+void print_str(char const *string) {
     while (*string)
         __putc(*string++);
 }
