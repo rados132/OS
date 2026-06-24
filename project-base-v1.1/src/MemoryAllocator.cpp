@@ -2,8 +2,8 @@
 
 MemoryAllocator::MemoryAllocator () {
     // Initialization of the memory allocator
-    mem_start_addr = align_up (( size_t ) HEAP_START_ADDR );    // Align start addr to block
-    mem_end_addr   = align_down (( size_t ) HEAP_END_ADDR );    // Align end addr to block
+    mem_start_addr = align_up (( size_t ) HEAP_START_ADDR ); // Align start addr to block
+    mem_end_addr   = align_down (( size_t ) HEAP_END_ADDR ); // Align end addr to block
 
     free_mem_head  = ( FreeFragment* ) mem_start_addr;
 
@@ -43,7 +43,7 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
         }
     }
 
-    if ( best == nullptr ) return nullptr;  // out of memory
+    if ( best == nullptr ) return nullptr; // out of memory
 
     size_t remainder_size = best->size - needed_size; // calculate the size of leftover fragment
 
@@ -55,7 +55,7 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
         remainder->next = best->next;
 
         if ( best_prev ) best_prev->next = remainder;
-        else             free_mem_head   = remainder;   // best was head
+        else             free_mem_head   = remainder; // best was head
     }
     else {
         // remainder is less then one block, add it to allocated fragment

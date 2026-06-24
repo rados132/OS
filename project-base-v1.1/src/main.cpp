@@ -3,7 +3,6 @@
 #include "../h/MemoryAllocator.hpp"
 #include "../h/RiscV.hpp"
 #include "../h/syscall_c.hpp"
-#include "../test/tests.hpp"
 
 extern "C" void trap_handler ();
 

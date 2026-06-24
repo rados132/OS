@@ -14,17 +14,17 @@ class TCB {
 public:
     TCB ( thread_body t_body, void* arg, void* stack );
 
+    static TCB*  running;  // static field indicating the running thread
+
 private:
     thread_body  body;
     void*        arg;
 
-    Context      context; // thread's context
+    Context      context;  // thread's context
 
-    uint64*      stack;
+    uint64*      stack;    // thread's stack
 
-    TCB*         next;
-
-    static TCB*  running; // static field indicating the running thread
+    TCB*         next;     // points to next thread in list
 
     bool         finished; // is thread finished
 
