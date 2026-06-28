@@ -140,5 +140,6 @@ qemu-gdb: ${KERNEL_IMG} .gdbinit
 
 # prevent deletion of my assembly files
 .PRECIOUS: src/trap_handler.s
+.PRECIOUS: src/context_switch.s
 
 -include $(wildcard ${DIR_BUILD}/*.d)

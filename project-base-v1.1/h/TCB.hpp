@@ -12,28 +12,27 @@ struct Context {
 
 class TCB {
 public:
-    TCB ( thread_body t_body, void* arg, void* stack );
+    TCB ( thread_body t_body, void* arg, void* stack_space );
 
-    static void yield ();
+    static void  yield  ();
+
+    static void  finish ();
 
     static TCB*  running;  // static field indicating the running thread
 
-protected:
-    static void  dispatch ();
-
 private:
-    thread_body  body;
-    void*        arg;
+    thread_body  body;      // routine to be executed by the thread
+    void*        arg;       // argument passed to routine
 
-    Context      context;  // thread's context
+    Context      context;   // thread's context
 
-    uint64*      stack;    // thread's stack
+    uint64*      stack;     // stack memory start addr, aligned to 16B
 
-    TCB*         next;     // points to next thread in list
+    TCB*         next;      // points to next thread in list
 
-    bool         finished; // is thread finished
+    bool         finished;  // is thread finished
 
-    friend class Scheduler;
+    friend class Scheduler; // so that Scheduler can access relevant fields
 };
 
 #endif
