@@ -1,0 +1,37 @@
+# Ignore everything
+/*
+
+# Allow top-level files and folders
+!/.gitignore
+!/Dockerfile
+!/Makefile
+!/Makefile.docker
+!/kernel.ld
+!/.gdbinit.tmpl-riscv
+!/LICENSE
+
+# Allow source and header folders
+!/inc
+!/inc/**
+!/lib
+!/lib/**
+!/src
+!/src/**
+!/test
+!/test/**
+
+# Allow .vscode settings
+!/.vscode
+!/.vscode/**
+
+# Build artifacts
+/build/
+/kernel
+/kernel.asm
+/.gdbinit
+
+# macOS junk
+.DS_Store
+**/.DS_Store
+.AppleDouble
+.LSOverrideAttribute

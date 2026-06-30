@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "RISC-V QEMU Debug",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/project/kernel",
+            "cwd": "/project",
+            "MIMode": "gdb",
+            "launchCompleteCommand": "None",
+            "sourceFileMap": {
+                "/project": "/Users/rados/Faks/Domaci/OS/"
+            },
+            "pipeTransport": {
+                "pipeCwd": "${workspaceFolder}",
+                "pipeProgram": "${workspaceFolder}/.vscode/docker-gdb.sh",
+                "pipeArgs": [],
+                "debuggerPath": "/usr/bin/gdb-multiarch"
+            },
+            "setupCommands": [
+                {
+                    "text": "set architecture riscv:rv64",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "target remote host.docker.internal:25000",
+                    "ignoreFailures": false
+                },
+                {
+                    "text": "set riscv use-compressed-breakpoints yes",
+                    "ignoreFailures": false
+                }
+            ]
+        }
+    ]
+}

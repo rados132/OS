@@ -1,0 +1,53 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "docker run --rm -it -v ${workspaceFolder}:/project riscv-env make",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "QEMU Run",
+            "type": "shell",
+            "command": "docker run --rm -it -v ${workspaceFolder}:/project riscv-env make qemu",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "docker run --rm -it -v ${workspaceFolder}:/project riscv-env make clean",
+            "group": "build"
+        },
+        {
+            "label": "QEMU GDB",
+            "type": "shell",
+            "command": "docker run --rm -it -p 25000:25000 -v ${workspaceFolder}:/project riscv-env make qemu-gdb",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Docker Shell",
+            "type": "shell",
+            "command": "docker run --rm -it -v ${workspaceFolder}:/project riscv-env bash",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}
