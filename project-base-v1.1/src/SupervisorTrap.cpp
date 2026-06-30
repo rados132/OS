@@ -54,6 +54,11 @@ extern "C" void supervisor_trap_handler () {
                 TCB::yield ();
                 break;
             }
+
+            default: {
+                // unknown trap
+                *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
+            }
         }
         
     } else {
