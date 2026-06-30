@@ -12,22 +12,20 @@ struct Context {
 
 class TCB {
 public:
-    TCB ( thread_body t_body, void* arg, void* stack_space );
-
+     TCB ( thread_body t_body = 0, void* arg = 0, void* stack_space = 0 );
     ~TCB ();
 
-    static void  yield  ();
+    static void  yield  (); // allow other thread to execute
 
-    static TCB*  running;  // static field indicating the running thread
+    static void  finish (); // finish execution of current thread
+
+    static TCB*  running;   // static field indicating the running thread
 
     void* operator new      ( size_t size );
-    void* operator new[]    ( size_t size );
     void  operator delete   ( void* ptr );
-    void  operator delete[] ( void* ptr );
     
 protected:
-    static void  finish         ();
-    static void  thread_wrapper ();
+    static void  wrapper ();
 
 private:
     thread_body  body;      // routine to be executed by the thread
@@ -38,8 +36,10 @@ private:
     uint64*      stack;     // stack memory start addr, aligned to 16B
 
     TCB*         next;      // points to next thread in list
-
+    
     bool         finished;  // is thread finished
+
+    static TCB*  dying;     // pointer to dying thread
 
     friend class Scheduler; // so that Scheduler can access relevant fields
 };

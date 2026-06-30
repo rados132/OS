@@ -1,0 +1,24 @@
+print_str ("=== TEST START ===\n");
+
+    // 2) alokacija (100 bajtova -> C API zaokružuje na blokove)
+    char* p = (char*)mem_alloc (100);
+    if (p == nullptr) {
+        print_str ("alloc: FAILED (nullptr)\n");
+        *((uint32*)0x100000) = 0x5555;
+    }
+    print_str ("alloc: OK\n");
+
+    // 3) upiši pa pročitaj nazad -> potvrda da je prostor stvarno upotrebljiv
+    for (int i = 0; i < 100; i++)
+        p[i] = (char)(i & 0xFF);
+    bool ok = true;
+    for (int i = 0; i < 100; i++)
+        if (p[i] != (char)(i & 0xFF))
+            ok = false;
+    print_str (ok ? "write/read: OK\n" : "write/read: FAILED\n");
+
+    // 4) oslobađanje
+    int r = mem_free (p);
+    print_str (r == 0 ? "free: OK\n" : "free: FAILED\n");
+
+    print_str ("=== TEST DONE ===\n");

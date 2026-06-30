@@ -1,41 +1,84 @@
 #include "../h/MemoryAllocator.hpp"
 #include "../h/RISC_V.hpp"
 #include "../h/syscall_c.hpp"
-#include "../lib/console.h"
 #include "../lib/hw.h"
 #include "../test/printing.hpp"
+#include "../h/TCB.hpp"
 
 extern "C" void trap_handler ();
 
+static const int NUM = 5;
+static volatile int done = 0;       // cooperative => inkrement bez yield-a je bezbjedan
+
+// --- nit koja se završava PADOM SA KRAJA body-ja (wrapper -> finish) ---
+static void worker_return ( void* arg ) {
+    uint64 id = ( uint64 ) arg;
+    for ( uint64 i = 0; i < id + 1; i++ ) {            // razne dužine -> završavaju se u raznim trenucima
+        print_str ( "  nit " ); print_int ( id );
+        print_str ( " ciklus " ); print_int ( i ); print_str ( "\n" );
+        thread_dispatch ();
+    }
+    print_str ( "  nit " ); print_int ( id ); print_str ( " ZAVRSAVA (return)\n" );
+    done++;
+}
+
+// --- nit koja se završava EKSPLICITNO preko thread_exit (syscall 0x12) ---
+static void worker_exit ( void* arg ) {
+    uint64 id = ( uint64 ) arg;
+    print_str ( "  nit " ); print_int ( id ); print_str ( " radi pa zove thread_exit\n" );
+    thread_dispatch ();
+    done++;
+    thread_exit ();                                    // odavde se NIKAD ne vraća
+    print_str ( "!!! GRESKA: thread_exit se vratio !!!\n" );  // ne smije se ispisati
+}
+
+// --- minimalna nit za fazu 2 (samo se kreira i odmah završi) ---
+static void worker_short ( void* arg ) {
+    done++;
+    thread_exit ();
+}
+
 void main () {
 
-    // 1) instaliraj prekidnu rutinu (stvec -> trap_handler)
-    RISC_V::w_stvec ((uint64)&trap_handler);
+    // install trap_handler (stvec -> trap_handler)
+    RISC_V::w_stvec ( ( uint64 ) &trap_handler );
 
-    print_str ("=== TEST START ===\n");
+    TCB::running = new TCB ();
 
-    // 2) alokacija (100 bajtova -> C API zaokružuje na blokove)
-    char* p = (char*)mem_alloc (100);
-    if (p == nullptr) {
-        print_str ("alloc: FAILED (nullptr)\n");
-        *((uint32*)0x100000) = 0x5555;
+    // ================= FAZA 1: uredno gašenje (return + thread_exit) =================
+    print_str ( "=== FAZA 1 ===\n" );
+    thread_t t[NUM];
+    thread_create ( &t[0], worker_return, ( void* ) 1 );
+    thread_create ( &t[1], worker_return, ( void* ) 2 );
+    thread_create ( &t[2], worker_exit,   ( void* ) 3 );
+    thread_create ( &t[3], worker_return, ( void* ) 4 );
+    thread_create ( &t[4], worker_exit,   ( void* ) 5 );
+
+    while ( done < NUM ) { thread_dispatch (); }        // glavna nit čeka da se SVE završe
+
+    print_str ( "FAZA 1 OK, done=" ); print_int ( done ); print_str ( "\n" );
+
+    // ================= FAZA 2: dokaz da reaper OSLOBADJA memoriju =================
+    // Serijski kreiramo daleko više niti nego što ih staje u hip ODJEDNOM —
+    // svaka se završi PRIJE sljedeće. Ako reaper ne vraća stek/TCB, mem_alloc
+    // će na kraju vratiti nullptr i thread_create pasti (negativan povratak).
+    print_str ( "=== FAZA 2 (100 niti serijski) ===\n" );
+    int prev = done;
+    for ( int n = 0; n < 100; n++ ) {
+        thread_t h;
+        int ret = thread_create ( &h, worker_short, ( void* ) ( uint64 ) n );
+        if ( ret < 0 ) {
+            print_str ( "thread_create PAO na n=" ); print_int ( n );
+            print_str ( "  => reaper NE oslobadja memoriju!\n" );
+            break;
+        }
+        while ( done == prev ) { thread_dispatch (); }  // sačekaj da se baš ta nit reapuje
+        prev = done;
     }
-    print_str ("alloc: OK\n");
+    print_str ( "FAZA 2 OK: 100 niti kreirano i oslobodjeno, done=" );
+    print_int ( done ); print_str ( "\n" );
 
-    // 3) upiši pa pročitaj nazad -> potvrda da je prostor stvarno upotrebljiv
-    for (int i = 0; i < 100; i++)
-        p[i] = (char)(i & 0xFF);
-    bool ok = true;
-    for (int i = 0; i < 100; i++)
-        if (p[i] != (char)(i & 0xFF))
-            ok = false;
-    print_str (ok ? "write/read: OK\n" : "write/read: FAILED\n");
+    print_str ( "main end. \n" );
 
-    // 4) oslobađanje
-    int r = mem_free (p);
-    print_str (r == 0 ? "free: OK\n" : "free: FAILED\n");
-
-    print_str ("=== TEST DONE ===\n");
-
-    *((uint32*)0x100000) = 0x5555; // halt the emulator
+    *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
 }

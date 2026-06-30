@@ -22,11 +22,7 @@ uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0
 }
 
 void* mem_alloc ( size_t size ) {
-    if ( size <= 0 ) return nullptr;
-
-    size_t blocks = ( size + MEM_BLOCK_SIZE - 1 ) / MEM_BLOCK_SIZE;
-
-    return ( void* ) sys_call ( MEM_ALLOC, ( uint64 ) blocks );
+    return ( void* ) sys_call ( MEM_ALLOC, ( uint64 ) size );
 }
 
 int mem_free ( void* ptr ) {

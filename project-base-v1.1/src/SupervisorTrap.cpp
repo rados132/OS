@@ -3,6 +3,7 @@
 #include "../h/syscall_c.hpp"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/TCB.hpp"
+#include "../test/printing.hpp"
 
 extern "C" void supervisor_trap_handler () {
     
@@ -50,6 +51,11 @@ extern "C" void supervisor_trap_handler () {
                 break;
             }
 
+            case THREAD_EXIT: {
+                TCB::finish ();
+                break;
+            }
+
             case THREAD_DISPATCH: {
                 TCB::yield ();
                 break;
@@ -57,12 +63,23 @@ extern "C" void supervisor_trap_handler () {
 
             default: {
                 // unknown trap
+                print_str ( "Error: supervisor_trap_handler (1) \n" );
+                print_str ( "TRAP scause=" ); print_int ( scause );
+                print_str ( " sepc=" );       print_int ( sepc );
+                print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
+                print_str ( "\n" );
+
                 *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
             }
         }
         
     } else {
-        // unknown trap
+        print_str ( "Error: supervisor_trap_handler (2) \n" );
+        print_str ( "TRAP scause=" ); print_int ( scause );
+        print_str ( " sepc=" );       print_int ( sepc );
+        print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
+        print_str ( "\n" );
+
         *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
     }
 
