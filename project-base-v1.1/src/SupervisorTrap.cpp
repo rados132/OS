@@ -1,6 +1,8 @@
 #include "../lib/hw.h"
 #include "../h/RISC_V.hpp"
+#include "../h/syscall_c.hpp"
 #include "../h/MemoryAllocator.hpp"
+#include "../h/TCB.hpp"
 
 extern "C" void supervisor_trap_handler () {
     
@@ -16,19 +18,40 @@ extern "C" void supervisor_trap_handler () {
         uint64 syscall_code = RISC_V::r_user_reg ( A0 );
 
         switch ( syscall_code ) {
-            case 0x01: {
-                // mem_alloc
+            case MEM_ALLOC: {
                 size_t size = RISC_V::r_user_reg ( A1 );
                 void*  ptr  = MemoryAllocator::get_instance ().k_malloc ( size );
                 RISC_V::w_user_reg ( A0, ( uint64 ) ptr );
                 break;
             }
 
-            case 0x02: {
-                // mem_free
+            case MEM_FREE: {
                 void* ptr = (void*) RISC_V::r_user_reg ( A1 );
                 int   ret = MemoryAllocator::get_instance ().k_free ( ptr );
                 RISC_V::w_user_reg ( A0, ( uint64 ) ret );
+                break;
+            }
+
+            case THREAD_CREATE: {
+                thread_t*   handle      = ( thread_t* )   RISC_V::r_user_reg ( A1 );
+                thread_body t_body      = ( thread_body ) RISC_V::r_user_reg ( A2 );
+                void*       arg         = ( void* )       RISC_V::r_user_reg ( A3 );
+                void*       stack_space = ( void* )       RISC_V::r_user_reg ( A4 );
+
+                TCB* tcb = new TCB ( t_body, arg, stack_space );
+
+                if ( tcb == nullptr ) {                          
+                    RISC_V::w_user_reg ( A0, ( uint64 ) -1 );
+                    break;
+                }
+
+                *handle = tcb;
+                RISC_V::w_user_reg ( A0, ( uint64 ) 0 );
+                break;
+            }
+
+            case THREAD_DISPATCH: {
+                TCB::yield ();
                 break;
             }
         }

@@ -14,11 +14,20 @@ class TCB {
 public:
     TCB ( thread_body t_body, void* arg, void* stack_space );
 
+    ~TCB ();
+
     static void  yield  ();
 
-    static void  finish ();
-
     static TCB*  running;  // static field indicating the running thread
+
+    void* operator new      ( size_t size );
+    void* operator new[]    ( size_t size );
+    void  operator delete   ( void* ptr );
+    void  operator delete[] ( void* ptr );
+    
+protected:
+    static void  finish         ();
+    static void  thread_wrapper ();
 
 private:
     thread_body  body;      // routine to be executed by the thread

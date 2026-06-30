@@ -1,5 +1,6 @@
 #include "../h/TCB.hpp"
 #include "../h/Scheduler.hpp"
+#include "../h/MemoryAllocator.hpp"
 
 extern "C" void context_switch ( Context* ctx_old, Context* ctx_new );
 
@@ -9,10 +10,19 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
     : body( t_body ), arg( arg ), stack( nullptr ), next( nullptr ), finished( false )
 { 
     if ( body != nullptr ) {
-        this->stack = ( uint64* ) (( char* ) stack_space + DEFAULT_STACK_SIZE ); // must be aligned to 16B
-    }
+        this->stack = ( uint64* ) stack_space;
 
-    Scheduler::put ( this );
+        this->context.ra = ( uint64 ) &TCB::thread_wrapper;
+        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE - 256 ); 
+
+        Scheduler::put ( this );
+    }
+}
+
+TCB::~TCB () {
+    if ( stack != nullptr ) {
+        MemoryAllocator::get_instance ().k_free ( stack );
+    }
 }
 
 void TCB::yield () {
@@ -28,4 +38,28 @@ void TCB::yield () {
     context_switch ( &curr->context, &running->context );
 }
 
-void TCB::finish () { TCB::running->finished = true; }
+void TCB::finish () { 
+    TCB::running->finished = true; 
+    yield ();
+}
+
+void TCB::thread_wrapper () {
+    TCB::running->body ( TCB::running->arg );
+    finish ();
+}
+
+void* TCB::operator new ( size_t size ) {
+    return MemoryAllocator::get_instance ().k_malloc ( size );
+}
+
+void* TCB::operator new[] ( size_t size ) {
+    return MemoryAllocator::get_instance ().k_malloc ( size );
+}
+
+void TCB::operator delete ( void* ptr ) {
+    MemoryAllocator::get_instance ().k_free ( ptr );
+}
+
+void TCB::operator delete[] ( void* ptr ) {
+    MemoryAllocator::get_instance ().k_free ( ptr );
+}

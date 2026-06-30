@@ -1,28 +1,20 @@
 #include "../h/syscall_c.hpp"
 
-enum SysCallCode {
-    MEM_ALLOC       = 0x01,
-    MEM_FREE        = 0x02,
-    THREAD_CREATE   = 0x11,
-    THREAD_EXIT     = 0x12,
-    THREAD_DISPATCH = 0x13,
-};
-
 uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0, uint64 arg4 = 0 ) {
 
     volatile uint64 ret;
 
     __asm__ volatile (
-        "mv a0, %[a0]  \n"
-        "mv a1, %[a1]  \n"
-        "mv a2, %[a2]  \n"
-        "mv a3, %[a3]  \n"
-        "mv a4, %[a4]  \n"
-        "ecall         \n"
-        "mv %[ret], a0 \n"
+        "mv a0, %[code]  \n"
+        "mv a1, %[arg1]  \n"
+        "mv a2, %[arg2]  \n"
+        "mv a3, %[arg3]  \n"
+        "mv a4, %[arg4]  \n"
+        "ecall           \n"
+        "mv %[ret], a0   \n"
         : [ret]  "=r"(ret)
-        : [a0] "r"(code),
-          [a1] "r"(arg1), [a2] "r"(arg2), [a3] "r"(arg3), [a4] "r"(arg4)
+        : [code] "r"(code),
+          [arg1] "r"(arg1), [arg2] "r"(arg2), [arg3] "r"(arg3), [arg4] "r"(arg4)
         : "a0", "a1", "a2", "a3", "a4", "memory"
     );
 
@@ -30,7 +22,11 @@ uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0
 }
 
 void* mem_alloc ( size_t size ) {
-    return ( void* ) sys_call ( MEM_ALLOC, ( uint64 ) size ); // poravnanje na blokove?
+    if ( size <= 0 ) return nullptr;
+
+    size_t blocks = ( size + MEM_BLOCK_SIZE - 1 ) / MEM_BLOCK_SIZE;
+
+    return ( void* ) sys_call ( MEM_ALLOC, ( uint64 ) blocks );
 }
 
 int mem_free ( void* ptr ) {
@@ -43,13 +39,15 @@ int thread_create ( thread_t* handle, void ( *start_routine ) ( void* ), void* a
 
     if ( stack_space == nullptr ) return -1; // if alloc fails return error code
 
-    return ( int ) sys_call ( 
+    int ret = ( int ) sys_call ( 
                                 THREAD_CREATE, 
                                 ( uint64 ) handle, 
                                 ( uint64 ) start_routine, 
                                 ( uint64 ) arg, 
                                 ( uint64 ) stack_space 
                             );
+    if ( ret < 0 ) mem_free ( stack_space ); // if thread_create fails, free stack mem
+    return ret;
 }
 
 int thread_exit () {
