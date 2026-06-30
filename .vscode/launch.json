@@ -10,7 +10,7 @@
             "MIMode": "gdb",
             "launchCompleteCommand": "None",
             "sourceFileMap": {
-                "/project": "/Users/rados/Faks/Domaci/OS/"
+                "/project": "${workspaceFolder}"
             },
             "pipeTransport": {
                 "pipeCwd": "${workspaceFolder}",
