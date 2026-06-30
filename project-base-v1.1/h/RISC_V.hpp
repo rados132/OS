@@ -48,9 +48,9 @@ class RISC_V {
     static void w_sip (uint64 sip);
 
     enum BitMaskSstatus {
-        SSTATUS_SIE = (1 << 1),
+        SSTATUS_SIE  = (1 << 1),
         SSTATUS_SPIE = (1 << 5),
-        SSTATUS_SPP = (1 << 8)
+        SSTATUS_SPP  = (1 << 8)
     };
 
     // mask set reg sstatus
