@@ -1,4 +1,4 @@
-#include "../h/MemoryAllocator.hpp"
+#include "../inc/MemoryAllocator.hpp"
 
 MemoryAllocator::MemoryAllocator () {
     // Initialization of the memory allocator

@@ -1,9 +1,9 @@
-#include "../h/MemoryAllocator.hpp"
-#include "../h/RISC_V.hpp"
-#include "../h/syscall_c.hpp"
+#include "../inc/MemoryAllocator.hpp"
+#include "../inc/RISC_V.hpp"
+#include "../inc/syscall_c.hpp"
 #include "../lib/hw.h"
 #include "../test/printing.hpp"
-#include "../h/TCB.hpp"
+#include "../inc/TCB.hpp"
 
 extern "C" void trap_handler ();
 

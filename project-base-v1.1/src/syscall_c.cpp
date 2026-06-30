@@ -1,4 +1,4 @@
-#include "../h/syscall_c.hpp"
+#include "../inc/syscall_c.hpp"
 
 uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0, uint64 arg4 = 0 ) {
 

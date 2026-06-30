@@ -1,8 +1,8 @@
 #include "../lib/hw.h"
-#include "../h/RISC_V.hpp"
-#include "../h/syscall_c.hpp"
-#include "../h/MemoryAllocator.hpp"
-#include "../h/TCB.hpp"
+#include "../inc/RISC_V.hpp"
+#include "../inc/syscall_c.hpp"
+#include "../inc/MemoryAllocator.hpp"
+#include "../inc/TCB.hpp"
 #include "../test/printing.hpp"
 
 extern "C" void supervisor_trap_handler () {

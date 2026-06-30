@@ -1,6 +1,6 @@
-#include "../h/TCB.hpp"
-#include "../h/Scheduler.hpp"
-#include "../h/MemoryAllocator.hpp"
+#include "../inc/TCB.hpp"
+#include "../inc/Scheduler.hpp"
+#include "../inc/MemoryAllocator.hpp"
 
 extern "C" void context_switch ( Context* ctx_old, Context* ctx_new );
 
@@ -13,7 +13,7 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
     if ( body != nullptr ) {
         this->stack = ( uint64* ) stack_space;
 
-        this->context.ra = ( uint64 ) &TCB::wrapper;
+        this->context.ra = ( uint64 ) &wrapper; // set inital ret addr to wrapper function
         this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE - 256 ); 
 
         Scheduler::put ( this );
@@ -27,9 +27,6 @@ TCB::~TCB () {
 }
 
 void TCB::yield () {
-    // let go of cpu
-    // allow other thread to execute
-
     TCB* curr = TCB::running;
 
     if ( !curr->finished ) Scheduler::put ( curr );
@@ -45,11 +42,11 @@ void TCB::yield () {
 }
 
 void TCB::finish () {
-    if ( TCB::dying ) {
-        delete TCB::dying; // if there was a dying thread delete it
-        TCB::dying = TCB::running; // set current as dying
-    }
+    // mark current thread as finished
     TCB::running->finished = true; 
+    // set dying pointer to current thread
+    TCB::dying = TCB::running;
+    // let go of cpu
     yield ();
 }
 
