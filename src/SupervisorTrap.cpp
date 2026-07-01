@@ -61,13 +61,41 @@ extern "C" void supervisor_trap_handler () {
                 break;
             }
 
-            // TODO: Semaphore calls
+            case SEM_OPEN: {
+                // TODO: Implement semaphore open
+                break;
+            }
+
+            case SEM_CLOSE: {
+                // TODO: Implement semaphore close
+                break;
+            }
+
+            case SEM_WAIT: { 
+                // TODO: Implement semaphore wait
+                break;
+            }
+
+            case SEM_SIGNAL: {
+                // TODO: Implement semaphore signal
+                break;
+            }
+
+            case SEM_WAIT_N: {
+                // TODO: Implement semaphore wait_n
+                break;
+            }
+
+            case SEM_SIGNAL_N: {
+                // TODO: Implement semaphore signal_n
+                break;
+            }
 
             default: {
                 // unknown trap
-                print_str ( "Error: supervisor_trap_handler (1) \n" );
+                print_str ( "Error: unknown trap \n" );
                 print_str ( "TRAP scause=" ); print_int ( scause );
-                print_str ( " sepc=" );       print_int ( sepc );
+                print_str ( " sepc=" );       print_int ( sepc, 16 );
                 print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
                 print_str ( "\n" );
 
@@ -76,9 +104,9 @@ extern "C" void supervisor_trap_handler () {
         }
         
     } else {
-        print_str ( "Error: supervisor_trap_handler (2) \n" );
+        print_str ( "Error: non ecall trap \n" );
         print_str ( "TRAP scause=" ); print_int ( scause );
-        print_str ( " sepc=" );       print_int ( sepc );
+        print_str ( " sepc=" );       print_int ( sepc, 16 );
         print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
         print_str ( "\n" );
 

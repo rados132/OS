@@ -14,7 +14,7 @@ static volatile int done = 0;       // cooperative => inkrement bez yield-a je b
 static void worker_return ( void* arg ) {
     uint64 id = ( uint64 ) arg;
     for ( uint64 i = 0; i < id + 1; i++ ) {            // razne dužine -> završavaju se u raznim trenucima
-        print_str ( "  nit " ); print_int ( id );
+        print_str ( "  nit " );   print_int ( id );
         print_str ( " ciklus " ); print_int ( i ); print_str ( "\n" );
         thread_dispatch ();
     }

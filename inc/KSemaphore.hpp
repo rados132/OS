@@ -16,9 +16,17 @@ public:
     void* operator new    ( size_t size );
     void  operator delete ( void* ptr );
 
+protected:
+    void block   ();
+    void unblock ();
+
+    void enqueue ( TCB* blocked );
+    TCB* dequeue ();
+
 private:
-    int  internal_val; // internal semaphore value
-    TCB* blocked;      // threads blocked on semaphore
+    int  val;     
+    TCB* blocked_head;
+    TCB* blocked_tail;
 };
 
 #endif

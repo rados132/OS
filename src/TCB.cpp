@@ -29,7 +29,8 @@ TCB::~TCB () {
 void TCB::yield () {
     TCB* curr = TCB::running;
 
-    if ( !curr->finished ) Scheduler::put ( curr );
+    if ( !curr->finished && !curr->sem.blocked )
+        Scheduler::put ( curr );
 
     TCB::running = Scheduler::get ();
 
