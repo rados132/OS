@@ -61,6 +61,8 @@ extern "C" void supervisor_trap_handler () {
                 break;
             }
 
+            // TODO: Semaphore calls
+
             default: {
                 // unknown trap
                 print_str ( "Error: supervisor_trap_handler (1) \n" );

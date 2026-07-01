@@ -1,6 +1,8 @@
 #ifndef K_SEMAPHORE_H
 #define K_SEMAPHORE_H
 
+#include "../lib/hw.h"
+
 class TCB;
 
 class KSemaphore {
@@ -10,6 +12,9 @@ public:
 
     int wait   ( unsigned n = 1 );
     int signal ( unsigned n = 1 );
+
+    void* operator new    ( size_t size );
+    void  operator delete ( void* ptr );
 
 private:
     int  internal_val; // internal semaphore value

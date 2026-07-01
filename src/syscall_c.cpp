@@ -53,3 +53,27 @@ int thread_exit () {
 void thread_dispatch () {
     sys_call ( THREAD_DISPATCH );
 }
+
+int sem_open ( sem_t* handle, unsigned init ) {
+    return ( int ) sys_call ( SEM_OPEN, ( uint64 ) handle, ( uint64 ) init );
+}
+
+int sem_close ( sem_t handle ) {
+    return ( int ) sys_call ( SEM_CLOSE, ( uint64 ) handle );
+}
+
+int sem_wait ( sem_t id ) {
+    return ( int ) sys_call ( SEM_WAIT, ( uint64 ) id );
+}
+
+int sem_signal ( sem_t id ) {
+    return ( int ) sys_call ( SEM_SIGNAL, ( uint64 ) id );
+}
+
+int sem_wait_n ( sem_t id, unsigned n ) {
+    return ( int ) sys_call ( SEM_WAIT_N, ( uint64 ) id, ( uint64 ) n );
+}
+
+int sem_signal_n ( sem_t id, unsigned n ) {
+    return ( int ) sys_call ( SEM_SIGNAL_N, ( uint64 ) id, ( uint64 ) n );
+}
