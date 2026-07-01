@@ -8,8 +8,17 @@
 
 extern "C" void trap_handler ();
 
+extern void userMain ();
+
+volatile static bool user_main_done = false;
+
+static void user_main_wrapper ( void* ) {
+    userMain ();
+    user_main_done = true;
+}
+
 static void idle_body ( void* ) {
-    while ( true ) thread_dispatch ();
+    while ( true ) TCB::yield ();
 }
 
 void main () {
@@ -22,8 +31,12 @@ void main () {
     void* idle_stack  = MemoryAllocator::get_instance ().k_malloc( DEFAULT_STACK_SIZE );
     TCB*  idle_thread = new TCB ( &idle_body, nullptr, idle_stack );
 
-    while ( true ) thread_dispatch();
+    void* user_stack  = MemoryAllocator::get_instance ().k_malloc( DEFAULT_STACK_SIZE );
+    TCB*  user_thread = new TCB ( &user_main_wrapper, nullptr, user_stack );
 
+    while ( !user_main_done ) TCB::yield ();
+
+    delete user_thread;
     delete idle_thread;
 
     print_str ( "main end. \n" );
