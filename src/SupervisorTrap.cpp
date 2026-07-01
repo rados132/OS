@@ -3,6 +3,7 @@
 #include "../inc/syscall_c.hpp"
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/TCB.hpp"
+#include "../inc/KSemaphore.hpp"
 #include "../test/printing.hpp"
 
 extern "C" void supervisor_trap_handler () {
@@ -62,32 +63,66 @@ extern "C" void supervisor_trap_handler () {
             }
 
             case SEM_OPEN: {
-                // TODO: Implement semaphore open
+                sem_t*   handle   = ( sem_t* )   RISC_V::r_user_reg ( A1 );
+                unsigned init_val = ( unsigned ) RISC_V::r_user_reg ( A2 );
+
+                KSemaphore* sem = new KSemaphore ( init_val );
+
+                if ( sem == nullptr ) {
+                    RISC_V::w_user_reg ( A0, ( uint64 ) -1 );
+                    break;
+                }
+
+                *handle = sem;
+                RISC_V::w_user_reg ( A0, ( uint64 ) 0 );
                 break;
             }
 
             case SEM_CLOSE: {
-                // TODO: Implement semaphore close
+                sem_t* handle = ( sem_t* ) RISC_V::r_user_reg ( A1 );
+
+                delete *handle;
+                *handle = nullptr;
+
+                RISC_V::w_user_reg ( A0, ( uint64 ) 0 );
                 break;
             }
 
             case SEM_WAIT: { 
-                // TODO: Implement semaphore wait
+                sem_t id = ( sem_t ) RISC_V::r_user_reg ( A1 );
+
+                int ret = id->wait ();
+
+                RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
             }
 
             case SEM_SIGNAL: {
-                // TODO: Implement semaphore signal
+                sem_t id = ( sem_t ) RISC_V::r_user_reg ( A1 );
+
+                int ret = id->signal ();
+
+                RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
             }
 
             case SEM_WAIT_N: {
-                // TODO: Implement semaphore wait_n
+                sem_t    id = ( sem_t )    RISC_V::r_user_reg ( A1 );
+                unsigned n  = ( unsigned ) RISC_V::r_user_reg ( A2 );
+
+                int ret = id->wait ( n );
+                
+                RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
             }
 
             case SEM_SIGNAL_N: {
-                // TODO: Implement semaphore signal_n
+                sem_t    id = ( sem_t )    RISC_V::r_user_reg ( A1 );
+                unsigned n  = ( unsigned ) RISC_V::r_user_reg ( A2 );
+
+                int ret = id->signal ( n );
+
+                RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
             }
 

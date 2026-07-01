@@ -47,7 +47,6 @@ void thread_dispatch ();
 class   KSemaphore;
 typedef KSemaphore _sem;
 
-class   _sem;
 typedef _sem* sem_t;
 
 int sem_open ( sem_t* handle, unsigned init );
