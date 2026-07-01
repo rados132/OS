@@ -77,3 +77,11 @@ int sem_wait_n ( sem_t id, unsigned n ) {
 int sem_signal_n ( sem_t id, unsigned n ) {
     return ( int ) sys_call ( SEM_SIGNAL_N, ( uint64 ) id, ( uint64 ) n );
 }
+
+char getc () {
+    return ( char ) sys_call ( CONSOLE_GETC );
+}
+
+void putc ( char c ) {
+    sys_call ( CONSOLE_PUTC, ( uint64 ) c );
+}

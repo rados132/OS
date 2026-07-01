@@ -13,7 +13,7 @@ struct Context {
 struct SemInfo {
     bool blocked = false;
     bool closed  = false;
-    int  waiting = 0;
+    uint waiting = 0;
 };
 
 class TCB {
@@ -27,7 +27,7 @@ public:
 
     static TCB*  running;   // static field indicating the running thread
     
-    void* operator new      ( size_t size );
+    void* operator new      ( size_t size ) noexcept;
     void  operator delete   ( void* ptr );
     
 protected:

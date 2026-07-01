@@ -21,6 +21,8 @@ enum SysCallCode {
     SEM_SIGNAL      = 0x24,
     SEM_WAIT_N      = 0x25,
     SEM_SIGNAL_N    = 0x26,
+    CONSOLE_GETC    = 0x41,
+    CONSOLE_PUTC    = 0x42,
 };
 
 
@@ -60,5 +62,13 @@ int sem_signal ( sem_t id );
 int sem_wait_n ( sem_t id, unsigned n );
 
 int sem_signal_n ( sem_t id, unsigned n );
+
+
+/* Console */
+const int EOF = -1;
+
+char getc ();
+
+void putc ( char );
 
 #endif

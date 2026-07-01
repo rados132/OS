@@ -13,7 +13,7 @@ public:
     int wait   ( unsigned n = 1 );
     int signal ( unsigned n = 1 );
 
-    void* operator new    ( size_t size );
+    void* operator new    ( size_t size ) noexcept;
     void  operator delete ( void* ptr );
 
 protected:
@@ -24,9 +24,9 @@ protected:
     TCB* dequeue ();
 
 private:
-    int  val;     
-    TCB* blocked_head;
-    TCB* blocked_tail;
+    uint  val;     
+    TCB*  blocked_head;
+    TCB*  blocked_tail;
 };
 
 #endif

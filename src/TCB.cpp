@@ -56,7 +56,7 @@ void TCB::wrapper () {
     finish ();
 }
 
-void* TCB::operator new ( size_t size ) {
+void* TCB::operator new ( size_t size ) noexcept {
     return MemoryAllocator::get_instance ().k_malloc ( size );
 }
 

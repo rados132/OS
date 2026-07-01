@@ -1,10 +1,11 @@
 #include "../lib/hw.h"
+#include "../lib/console.h"
 #include "../inc/RISC_V.hpp"
 #include "../inc/syscall_c.hpp"
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/TCB.hpp"
 #include "../inc/KSemaphore.hpp"
-#include "../test/printing.hpp"
+#include "../inc/printing.hpp"
 
 extern "C" void supervisor_trap_handler () {
     
@@ -40,6 +41,11 @@ extern "C" void supervisor_trap_handler () {
                 void*       arg         = ( void* )       RISC_V::r_user_reg ( A3 );
                 void*       stack_space = ( void* )       RISC_V::r_user_reg ( A4 );
 
+                if ( handle == nullptr ) {
+                    RISC_V::w_user_reg( A1, ( uint64 ) -1 );
+                    break;
+                }
+
                 TCB* tcb = new TCB ( t_body, arg, stack_space );
 
                 if ( tcb == nullptr ) {                          
@@ -66,6 +72,11 @@ extern "C" void supervisor_trap_handler () {
                 sem_t*   handle   = ( sem_t* )   RISC_V::r_user_reg ( A1 );
                 unsigned init_val = ( unsigned ) RISC_V::r_user_reg ( A2 );
 
+                if ( handle == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
+
                 KSemaphore* sem = new KSemaphore ( init_val );
 
                 if ( sem == nullptr ) {
@@ -79,10 +90,14 @@ extern "C" void supervisor_trap_handler () {
             }
 
             case SEM_CLOSE: {
-                sem_t* handle = ( sem_t* ) RISC_V::r_user_reg ( A1 );
+                sem_t handle = ( sem_t ) RISC_V::r_user_reg ( A1 );
 
-                delete *handle;
-                *handle = nullptr;
+                if ( handle == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
+
+                delete handle;
 
                 RISC_V::w_user_reg ( A0, ( uint64 ) 0 );
                 break;
@@ -90,6 +105,11 @@ extern "C" void supervisor_trap_handler () {
 
             case SEM_WAIT: { 
                 sem_t id = ( sem_t ) RISC_V::r_user_reg ( A1 );
+
+                if ( id == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
 
                 int ret = id->wait ();
 
@@ -99,6 +119,11 @@ extern "C" void supervisor_trap_handler () {
 
             case SEM_SIGNAL: {
                 sem_t id = ( sem_t ) RISC_V::r_user_reg ( A1 );
+
+                if ( id == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
 
                 int ret = id->signal ();
 
@@ -110,6 +135,11 @@ extern "C" void supervisor_trap_handler () {
                 sem_t    id = ( sem_t )    RISC_V::r_user_reg ( A1 );
                 unsigned n  = ( unsigned ) RISC_V::r_user_reg ( A2 );
 
+                if ( id == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
+
                 int ret = id->wait ( n );
                 
                 RISC_V::w_user_reg ( A0, ( uint64 ) ret );
@@ -120,9 +150,26 @@ extern "C" void supervisor_trap_handler () {
                 sem_t    id = ( sem_t )    RISC_V::r_user_reg ( A1 );
                 unsigned n  = ( unsigned ) RISC_V::r_user_reg ( A2 );
 
+                if ( id == nullptr ) {
+                    RISC_V::w_user_reg( A0, ( uint64 ) -1 );
+                    break;
+                }
+
                 int ret = id->signal ( n );
 
                 RISC_V::w_user_reg ( A0, ( uint64 ) ret );
+                break;
+            }
+
+            case CONSOLE_GETC: {
+                char c = __getc ();
+                RISC_V::w_user_reg ( A0, ( uint64 ) c );
+                break;
+            }
+
+            case CONSOLE_PUTC: {
+                char c = ( char ) RISC_V::r_user_reg ( A1 );
+                __putc ( c );
                 break;
             }
 

@@ -88,7 +88,7 @@ TCB* KSemaphore::dequeue () {
     return ret;
 }
 
-void* KSemaphore::operator new ( size_t size ) {
+void* KSemaphore::operator new ( size_t size ) noexcept {
     return MemoryAllocator::get_instance ().k_malloc ( size );
 }
 
