@@ -23,14 +23,18 @@ extern "C" void supervisor_trap_handler () {
         switch ( syscall_code ) {
             case MEM_ALLOC: {
                 size_t size = RISC_V::r_user_reg ( A1 );
-                void*  ptr  = MemoryAllocator::get_instance ().k_malloc ( size );
+                
+                void*  ptr  = MemoryAllocator::k_malloc ( size );
+
                 RISC_V::w_user_reg ( A0, ( uint64 ) ptr );
                 break;
             }
 
             case MEM_FREE: {
                 void* ptr = (void*) RISC_V::r_user_reg ( A1 );
-                int   ret = MemoryAllocator::get_instance ().k_free ( ptr );
+
+                int   ret = MemoryAllocator::k_free ( ptr );
+
                 RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
             }

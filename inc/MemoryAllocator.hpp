@@ -12,29 +12,23 @@ typedef size_t header_t; // header of allocated block
 
 class MemoryAllocator {
 public:
-    static  MemoryAllocator& get_instance ();
+    static void  init ();
 
-    void*   k_malloc ( size_t size );
+    static void* k_malloc ( size_t size );
 
-    int     k_free   ( void* ptr );
+    static int   k_free   ( void* ptr );
 
 protected:
   static inline constexpr size_t align_up   ( size_t addr );
   static inline constexpr size_t align_down ( size_t addr );
 
-  void try_to_merge ( FreeFragment* prev, FreeFragment* curr );
+  static void try_to_merge ( FreeFragment* prev, FreeFragment* curr );
 
 private:
-    MemoryAllocator ();
-
-    MemoryAllocator            ( const MemoryAllocator& ) = delete;
-
-    MemoryAllocator& operator= ( const MemoryAllocator& ) = delete;
-
-    size_t        mem_start_addr;
-    size_t        mem_end_addr;
-    size_t        free_mem_size;
-    FreeFragment* free_mem_head;
+    static size_t        mem_start_addr;
+    static size_t        mem_end_addr;
+    static size_t        free_mem_size;
+    static FreeFragment* free_mem_head;
 };
 
 #endif

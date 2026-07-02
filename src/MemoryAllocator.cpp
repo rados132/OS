@@ -1,6 +1,24 @@
 #include "../inc/MemoryAllocator.hpp"
 
-MemoryAllocator::MemoryAllocator () {
+size_t        MemoryAllocator::mem_start_addr = 0;
+size_t        MemoryAllocator::mem_end_addr   = 0;
+size_t        MemoryAllocator::free_mem_size  = 0;
+FreeFragment* MemoryAllocator::free_mem_head  = 0;
+
+// MemoryAllocator::MemoryAllocator () {
+//     // Initialization of the memory allocator
+//     mem_start_addr = align_up (( size_t ) HEAP_START_ADDR ); // Align start addr to block
+//     mem_end_addr   = align_down (( size_t ) HEAP_END_ADDR ); // Align end addr to block
+
+//     free_mem_head  = ( FreeFragment* ) mem_start_addr;
+
+//     free_mem_size  = mem_end_addr - mem_start_addr;
+
+//     free_mem_head->size = free_mem_size;
+//     free_mem_head->next = nullptr;
+// }
+
+void MemoryAllocator::init () {
     // Initialization of the memory allocator
     mem_start_addr = align_up (( size_t ) HEAP_START_ADDR ); // Align start addr to block
     mem_end_addr   = align_down (( size_t ) HEAP_END_ADDR ); // Align end addr to block
@@ -11,12 +29,6 @@ MemoryAllocator::MemoryAllocator () {
 
     free_mem_head->size = free_mem_size;
     free_mem_head->next = nullptr;
-}
-
-MemoryAllocator& MemoryAllocator::get_instance () {
-    // Get the singleton instance of MemoryAllocator
-    static MemoryAllocator instance;
-    return instance;
 }
 
 void* MemoryAllocator::k_malloc ( size_t size ) {
