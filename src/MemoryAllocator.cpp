@@ -18,7 +18,7 @@ void MemoryAllocator::init () {
     free_mem_head->next = nullptr;
 }
 
-void* MemoryAllocator::k_malloc ( size_t size ) {
+void* MemoryAllocator::kmalloc ( size_t size ) {
     
     // check if argument is valid and requested size is not larger then size of avaliable memory
     if ( size <= 0 || size > free_mem_size ) return nullptr;
@@ -72,7 +72,7 @@ void* MemoryAllocator::k_malloc ( size_t size ) {
     return ( void* ) ( ( char* ) best + sizeof ( header_t ) );
 }
 
-int MemoryAllocator::k_free ( void* ptr ) {
+int MemoryAllocator::kfree ( void* ptr ) {
 
     if ( ptr == nullptr ) return 0; // nothing to free
 

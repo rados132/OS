@@ -25,11 +25,11 @@ void main () {
     TCB::running = new TCB (); // initialize the main thread
 
     // initialize idle thread
-    void* idle_stack = MemoryAllocator::k_malloc ( DEFAULT_STACK_SIZE );
+    void* idle_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
     new TCB ( &idle_body, nullptr, idle_stack );
 
     // initialize user thread
-    void* user_stack = MemoryAllocator::k_malloc ( DEFAULT_STACK_SIZE );
+    void* user_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
     new TCB ( &user_main_wrapper, nullptr, user_stack );
 
     while ( !user_main_done ) thread_dispatch (); // wait for user thread to finish

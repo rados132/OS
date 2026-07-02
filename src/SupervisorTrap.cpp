@@ -24,7 +24,7 @@ extern "C" void supervisor_trap_handler () {
             case MEM_ALLOC: {
                 size_t size = RISC_V::r_user_reg ( A1 );
                 
-                void*  ptr  = MemoryAllocator::k_malloc ( size );
+                void*  ptr  = MemoryAllocator::kmalloc ( size );
 
                 RISC_V::w_user_reg ( A0, ( uint64 ) ptr );
                 break;
@@ -33,7 +33,7 @@ extern "C" void supervisor_trap_handler () {
             case MEM_FREE: {
                 void* ptr = (void*) RISC_V::r_user_reg ( A1 );
 
-                int   ret = MemoryAllocator::k_free ( ptr );
+                int   ret = MemoryAllocator::kfree ( ptr );
 
                 RISC_V::w_user_reg ( A0, ( uint64 ) ret );
                 break;
@@ -183,7 +183,7 @@ extern "C" void supervisor_trap_handler () {
 
             default: {
                 // unknown syscall
-                print_str ( "Error: unknown syscall \n" );
+                print_str ( "Error: unknown syscall\n" );
                 print_str ( "TRAP scause=" ); print_int ( scause );
                 print_str ( " sepc=" );       print_int ( sepc, 16 );
                 print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
@@ -195,7 +195,7 @@ extern "C" void supervisor_trap_handler () {
         
     } 
     else {
-        print_str ( "Error: unknown trap \n" );
+        print_str ( "Error: unknown trap\n" );
         print_str ( "TRAP scause=" ); print_int ( scause );
         print_str ( " sepc=" );       print_int ( sepc, 16 );
         print_str ( " stval=" );      print_int ( RISC_V::r_stval () );

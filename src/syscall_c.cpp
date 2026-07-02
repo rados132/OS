@@ -3,7 +3,7 @@
 
 uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0, uint64 arg4 = 0 ) {
 
-    volatile uint64 ret;
+    uint64 ret;
 
     __asm__ volatile (
         "mv a0, %[code]  \n"

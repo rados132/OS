@@ -89,9 +89,9 @@ TCB* KSemaphore::dequeue () {
 }
 
 void* KSemaphore::operator new ( size_t size ) noexcept {
-    return MemoryAllocator::k_malloc ( size );
+    return MemoryAllocator::kmalloc ( size );
 }
 
 void KSemaphore::operator delete ( void* ptr ) {
-    MemoryAllocator::k_free ( ptr );
+    MemoryAllocator::kfree ( ptr );
 }

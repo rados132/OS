@@ -23,5 +23,10 @@ void print_int (int xx, int base, int sgn ) {
 
     if ( sgn && xx < 0 ) buf[i++] = '-';
 
+    if ( base == 16 ) {
+        __putc ( '0' );
+        __putc ( 'x' );
+    }
+
     while ( --i >= 0 ) __putc ( buf[i] );
 }

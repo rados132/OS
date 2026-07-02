@@ -24,7 +24,7 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
 
 TCB::~TCB () {
     if ( stack != nullptr ) {
-        MemoryAllocator::k_free ( stack );
+        MemoryAllocator::kfree ( stack );
     }
 }
 
@@ -65,9 +65,9 @@ void TCB::wrapper () {
 }
 
 void* TCB::operator new ( size_t size ) noexcept {
-    return MemoryAllocator::k_malloc ( size );
+    return MemoryAllocator::kmalloc ( size );
 }
 
 void TCB::operator delete ( void* ptr ) {
-    MemoryAllocator::k_free ( ptr );
+    MemoryAllocator::kfree ( ptr );
 }

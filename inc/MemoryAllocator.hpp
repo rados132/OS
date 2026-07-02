@@ -14,9 +14,9 @@ class MemoryAllocator {
 public:
     static void  init ();
 
-    static void* k_malloc ( size_t size );
+    static void* kmalloc ( size_t size );
 
-    static int   k_free   ( void* ptr );
+    static int   kfree   ( void* ptr );
 
 protected:
   static inline constexpr size_t align_up   ( size_t addr );
