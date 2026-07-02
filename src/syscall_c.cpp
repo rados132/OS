@@ -1,4 +1,5 @@
 #include "../inc/syscall_c.hpp"
+#include "../lib/console.h"
 
 uint64 sys_call ( uint64 code, uint64 arg1 = 0, uint64 arg2 = 0, uint64 arg3 = 0, uint64 arg4 = 0 ) {
 
@@ -76,6 +77,10 @@ int sem_wait_n ( sem_t id, unsigned n ) {
 
 int sem_signal_n ( sem_t id, unsigned n ) {
     return ( int ) sys_call ( SEM_SIGNAL_N, ( uint64 ) id, ( uint64 ) n );
+}
+
+int time_sleep ( time_t time ) {
+    return ( int ) sys_call ( TIME_SLEEP, ( uint64 ) time );
 }
 
 char getc () {

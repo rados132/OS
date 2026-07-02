@@ -6,7 +6,7 @@
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
 
-extern "C" void trap_handler ();
+extern "C" void ivtp ();
 
 extern void userMain ();
 
@@ -18,26 +18,25 @@ static void user_main_wrapper ( void* ) {
 }
 
 static void idle_body ( void* ) {
-    while ( true ) TCB::yield ();
+    while ( true ) {
+        thread_dispatch ();
+    }
 }
 
 void main () {
 
     // install trap_handler (stvec -> trap_handler)
-    RISC_V::w_stvec ( ( uint64 ) &trap_handler );
+    RISC_V::w_stvec ( ( uint64 ) &ivtp | 1 );
 
     TCB::running = new TCB (); // initialize the main thread
 
-    void* idle_stack  = MemoryAllocator::get_instance ().k_malloc( DEFAULT_STACK_SIZE );
-    TCB*  idle_thread = new TCB ( &idle_body, nullptr, idle_stack );
+    void* idle_stack = MemoryAllocator::get_instance ().k_malloc ( DEFAULT_STACK_SIZE );
+    new TCB ( &idle_body, nullptr, idle_stack );
 
-    void* user_stack  = MemoryAllocator::get_instance ().k_malloc( DEFAULT_STACK_SIZE );
-    TCB*  user_thread = new TCB ( &user_main_wrapper, nullptr, user_stack );
+    void* user_stack = MemoryAllocator::get_instance ().k_malloc ( DEFAULT_STACK_SIZE );
+    new TCB ( &user_main_wrapper, nullptr, user_stack );
 
-    while ( !user_main_done ) TCB::yield ();
-
-    delete user_thread;
-    delete idle_thread;
+    while ( !user_main_done ) thread_dispatch ();
 
     print_str ( "main end. \n" );
 

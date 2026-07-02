@@ -9,9 +9,9 @@
 
 extern "C" void supervisor_trap_handler () {
     
-    volatile uint64 sepc    = RISC_V::r_sepc    ();
-    volatile uint64 scause  = RISC_V::r_scause  ();
-    volatile uint64 sstatus = RISC_V::r_sstatus ();
+    volatile uint64 sepc     = RISC_V::r_sepc     ();
+    volatile uint64 scause   = RISC_V::r_scause   ();
+    volatile uint64 sstatus  = RISC_V::r_sstatus  ();
 
     if ( scause == 0x08 || scause == 0x09 ) {
         // ecall from U-mode or S-mode
@@ -161,6 +161,10 @@ extern "C" void supervisor_trap_handler () {
                 break;
             }
 
+            case TIME_SLEEP: {
+                break; // not implemented
+            }
+
             case CONSOLE_GETC: {
                 char c = __getc ();
                 RISC_V::w_user_reg ( A0, ( uint64 ) c );
@@ -174,8 +178,8 @@ extern "C" void supervisor_trap_handler () {
             }
 
             default: {
-                // unknown trap
-                print_str ( "Error: unknown trap \n" );
+                // unknown syscall
+                print_str ( "Error: unknown syscall \n" );
                 print_str ( "TRAP scause=" ); print_int ( scause );
                 print_str ( " sepc=" );       print_int ( sepc, 16 );
                 print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
@@ -185,8 +189,9 @@ extern "C" void supervisor_trap_handler () {
             }
         }
         
-    } else {
-        print_str ( "Error: non ecall trap \n" );
+    } 
+    else {
+        print_str ( "Error: unknown trap \n" );
         print_str ( "TRAP scause=" ); print_int ( scause );
         print_str ( " sepc=" );       print_int ( sepc, 16 );
         print_str ( " stval=" );      print_int ( RISC_V::r_stval () );
@@ -195,6 +200,15 @@ extern "C" void supervisor_trap_handler () {
         *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
     }
 
-    RISC_V::w_sepc    ( sepc );
-    RISC_V::w_sstatus ( sstatus );
+    RISC_V::w_sepc     ( sepc );
+    RISC_V::w_sstatus  ( sstatus );
+}
+
+extern "C" void timer_interrupt_handler () {
+    // clear timer interrupt
+    RISC_V::mc_sip ( RISC_V::SIP_SSIP );
+}
+
+extern "C" void console_interrupt_handler () {
+    console_handler ();
 }

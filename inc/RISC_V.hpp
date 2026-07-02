@@ -183,7 +183,11 @@ inline void RISC_V::w_sscratch (uint64 sscratch) {
 }
 
 inline uint64* RISC_V::get_trap_frame () {
-    return (uint64*)r_sscratch ();
+    uint64* fp;
+
+    __asm__ volatile ("mv %0, fp" : "=r"(fp));
+    
+    return fp;
 }
 
 enum UserRegs {

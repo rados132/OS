@@ -1,7 +1,9 @@
 #include "../inc/TCB.hpp"
 #include "../inc/Scheduler.hpp"
 #include "../inc/MemoryAllocator.hpp"
+#include "../inc/syscall_c.hpp"
 
+extern "C" void pop_spp_spie   ();
 extern "C" void context_switch ( Context* ctx_old, Context* ctx_new );
 
 TCB* TCB::running = nullptr;
@@ -14,7 +16,7 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
         this->stack = ( uint64* ) stack_space;
 
         this->context.ra = ( uint64 ) &wrapper; // set inital ret addr to wrapper function
-        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE - 256 ); 
+        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE ); 
 
         Scheduler::put ( this );
     }
@@ -52,8 +54,9 @@ void TCB::finish () {
 }
 
 void TCB::wrapper () {
+    pop_spp_spie ();
     TCB::running->body ( TCB::running->arg );
-    finish ();
+    thread_exit ();
 }
 
 void* TCB::operator new ( size_t size ) noexcept {

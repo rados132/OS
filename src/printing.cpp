@@ -1,4 +1,4 @@
-#include "printing.hpp"
+#include "../inc/printing.hpp"
 #include "../lib/console.h"
 
 void print_str ( char const* string ) {
