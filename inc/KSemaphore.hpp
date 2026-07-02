@@ -10,8 +10,8 @@ public:
      KSemaphore ( unsigned permits = 1 );
     ~KSemaphore ();
 
-    int wait   ( unsigned n = 1 );
-    int signal ( unsigned n = 1 );
+    int wait    ( unsigned n = 1 );
+    int signal  ( unsigned n = 1 );
 
     void* operator new    ( size_t size ) noexcept;
     void  operator delete ( void* ptr );

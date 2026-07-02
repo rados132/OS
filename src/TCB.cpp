@@ -47,16 +47,21 @@ void TCB::yield () {
 void TCB::finish () {
     // mark current thread as finished
     TCB::running->finished = true; 
+
     // set dying pointer to current thread
     TCB::dying = TCB::running;
-    // let go of cpu
-    yield ();
+    
+    yield (); // let go of cpu
 }
 
 void TCB::wrapper () {
-    pop_spp_spie ();
+    // clear spp and spie, return to U-mode
+    pop_spp_spie (); 
+
+    // run thred body with given arg
     TCB::running->body ( TCB::running->arg );
-    thread_exit ();
+
+    thread_exit (); // kill thread after it's done
 }
 
 void* TCB::operator new ( size_t size ) noexcept {
