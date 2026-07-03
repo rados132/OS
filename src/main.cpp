@@ -20,7 +20,7 @@ void main () {
     // install interrupt vector table
     RISC_V::w_stvec ( ( uint64 ) &ivtp | 1 );
 
-    MemoryAllocator::init (); // initialize memory allocator
+    MemoryAllocator::init ();  // initialize memory allocator
 
     TCB::running = new TCB (); // initialize the main thread
 

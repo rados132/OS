@@ -5,13 +5,6 @@
 .balign 4
 .global ivtp
 
-ivtp:
-    j trap_handler
-    j timer_interrupt
-.skip 28
-    j console_interrupt
-    sret
-
 .macro save_regs
     # push all user regs
     addi sp, sp, -256
@@ -28,29 +21,26 @@ ivtp:
     addi sp, sp, 256
 .endm
 
+ivtp:
+    j trap_handler
+    j timer_interrupt
+.skip 28
+    j console_interrupt
+
 trap_handler:   
     save_regs
-
     call supervisor_trap_handler
-
     restore_regs
-
     sret
 
 timer_interrupt:
     save_regs
-
     call timer_interrupt_handler
-
     restore_regs
-    
     sret
 
 console_interrupt:
     save_regs
-
     call console_interrupt_handler
-
     restore_regs
-
     sret
