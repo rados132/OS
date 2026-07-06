@@ -71,8 +71,10 @@ void KSemaphore::unblock () {
 void KSemaphore::enqueue ( TCB* blocked ) {
     blocked->next = nullptr;
 
-    if ( blocked_tail ) blocked_tail->next = blocked;
-    else                blocked_head       = blocked;
+    if ( blocked_tail )
+        blocked_tail->next = blocked;
+    else
+        blocked_head = blocked;
 
     blocked_tail = blocked;
 }
