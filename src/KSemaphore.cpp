@@ -2,6 +2,7 @@
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/TCB.hpp"
 #include "../inc/Scheduler.hpp"
+#include "../inc/syscall_c.hpp"
 
 KSemaphore::KSemaphore ( unsigned permits )
     : val( permits ), blocked_head( nullptr ), blocked_tail( nullptr )
@@ -55,7 +56,7 @@ void KSemaphore::block () {
 
     enqueue ( TCB::running );
 
-    TCB::yield ();
+    thread_dispatch ();
 }
 
 void KSemaphore::unblock () {
