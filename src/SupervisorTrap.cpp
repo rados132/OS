@@ -192,7 +192,6 @@ extern "C" void supervisor_trap_handler () {
                 *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
             }
         }
-        
     } 
     else {
         print_str ( "Error: unknown trap\n" );
@@ -204,8 +203,8 @@ extern "C" void supervisor_trap_handler () {
         *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
     }
 
-    CSR::w_sepc     ( sepc );
-    CSR::w_sstatus  ( sstatus );
+    CSR::w_sepc    ( sepc );
+    CSR::w_sstatus ( sstatus );
 }
 
 extern "C" void timer_interrupt_handler () {

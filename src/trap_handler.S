@@ -3,7 +3,7 @@
 .extern console_interrupt_handler
 
 .balign 4
-.global ivtp
+.global trap_handler
 
 .macro save_regs
     # push all user regs
@@ -21,13 +21,13 @@
     addi sp, sp, 256
 .endm
 
-ivtp:
-    j trap_handler
+trap_handler:
+    j internal_trap
     j timer_interrupt
 .skip 28
     j console_interrupt
 
-trap_handler:   
+internal_trap:   
     save_regs
     call supervisor_trap_handler
     restore_regs

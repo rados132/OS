@@ -6,7 +6,7 @@
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
 
-extern "C" void ivt ();
+extern "C" void trap_handler ();
 
 extern void userMain ();
 
@@ -17,8 +17,8 @@ volatile static bool user_main_done = false;
 
 void main () {
 
-    // install interrupt vector table
-    CSR::w_stvec ( ( uint64 ) &ivt | 1 );
+    // install trap handler routine in vectored mode
+    CSR::w_stvec ( ( uint64 ) &trap_handler | 1 );
 
     MemoryAllocator::init ();  // initialize memory allocator
 
