@@ -1,12 +1,12 @@
 #include "../lib/hw.h"
 #include "../inc/MemoryAllocator.hpp"
-#include "../inc/RISC_V.hpp"
+#include "../inc/riscv.hpp"
 #include "../inc/syscall_c.hpp"
 #include "../inc/TCB.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
 
-extern "C" void ivtp ();
+extern "C" void ivt ();
 
 extern void userMain ();
 
@@ -18,7 +18,7 @@ volatile static bool user_main_done = false;
 void main () {
 
     // install interrupt vector table
-    RISC_V::w_stvec ( ( uint64 ) &ivtp | 1 );
+    CSR::w_stvec ( ( uint64 ) &ivt | 1 );
 
     MemoryAllocator::init ();  // initialize memory allocator
 
