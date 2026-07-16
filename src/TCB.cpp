@@ -6,8 +6,9 @@
 extern "C" void pop_spp_spie   ();
 extern "C" void context_switch ( Context* ctx_old, Context* ctx_new );
 
-TCB* TCB::running = nullptr;
-TCB* TCB::dying   = nullptr;
+TCB*   TCB::running  = nullptr;
+TCB*   TCB::dying    = nullptr;
+time_t TCB::cpu_time = 0;
 
 TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
     : body( t_body ), arg( arg ), stack( nullptr ), next( nullptr ), finished( false )

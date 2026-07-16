@@ -208,8 +208,21 @@ extern "C" void supervisor_trap_handler () {
 }
 
 extern "C" void timer_interrupt_handler () {
+    // save pc and status regs
+    volatile uint64 sepc    = CSR::r_sepc    ();
+    volatile uint64 sstatus = CSR::r_sstatus ();
+
     // clear timer interrupt
     CSR::mc_sip ( CSR::SIP_SSIP );
+
+    if ( ++TCB::cpu_time >= DEFAULT_TIME_SLICE ) {
+        TCB::cpu_time = 0;
+        TCB::yield ();
+    }
+
+    // restore pc and status regs
+    CSR::w_sepc    ( sepc );
+    CSR::w_sstatus ( sstatus );
 }
 
 extern "C" void console_interrupt_handler () {

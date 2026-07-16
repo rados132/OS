@@ -18,14 +18,16 @@ struct SemInfo {
 
 class TCB {
 public:
-     TCB ( thread_body t_body = 0, void* arg = 0, void* stack_space = 0 );
-    ~TCB ();
+    TCB ( thread_body t_body = 0, void* arg = 0, void* stack_space = 0 );
+   ~TCB ();
 
     static void  yield  (); // allow other thread to execute
 
     static void  finish (); // finish execution of current thread
 
-    static TCB*  running;   // static field indicating the running thread
+    static TCB*   running;  // static field indicating the running thread
+
+    static time_t cpu_time; // for how long did current thread had the cpu
     
     void* operator new      ( size_t size ) noexcept;
     void  operator delete   ( void* ptr );
