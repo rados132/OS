@@ -39,10 +39,13 @@ void TCB::yield () {
 
     context_switch ( &curr->context, &running->context );
 
+    /* if previous thread was dying delete it */
     if ( TCB::dying ) {
-        delete TCB::dying; // if previous thread was dying delete it
+        delete TCB::dying;
         TCB::dying = nullptr;
     }
+
+    TCB::cpu_time = 0; // reset the cpu time for new thread
 }
 
 void TCB::finish () {

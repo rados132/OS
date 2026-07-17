@@ -216,7 +216,6 @@ extern "C" void timer_interrupt_handler () {
     CSR::mc_sip ( CSR::SIP_SSIP );
 
     if ( ++TCB::cpu_time >= DEFAULT_TIME_SLICE ) {
-        TCB::cpu_time = 0;
         TCB::yield ();
     }
 
