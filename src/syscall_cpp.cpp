@@ -22,8 +22,10 @@ Thread::~Thread () {}
 
 void Thread::wrapper ( void* thread ) {
     Thread* self = ( Thread* ) thread;
-    if ( self->body ) self->body ( self->arg );
-    else              self->run  ();
+    if ( self->body )
+        self->body ( self->arg );
+    else
+        self->run ();
 }
 
 int Thread::start () {
@@ -44,7 +46,16 @@ PeriodicThread::PeriodicThread ( time_t period )
 }
 
 void PeriodicThread::terminate () {
-    return;
+    period = ( time_t ) -1;
+}
+
+void PeriodicThread::run () {
+    time_t myPeriod = period;
+    do {
+        periodicActivation ();
+        Thread::sleep ( myPeriod );
+    }
+    while ( period != ( time_t ) -1 );
 }
 
 Semaphore::Semaphore ( unsigned init )
