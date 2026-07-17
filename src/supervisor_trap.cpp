@@ -76,6 +76,11 @@ extern "C" void supervisor_trap_handler () {
             case TIME_SLEEP: {
                 time_t time_to_sleep = ( time_t ) TrapFrame::r_user_reg ( A1 );
 
+                if ( time_to_sleep == 0 ) {
+                    TrapFrame::w_user_reg ( A0, ( uint64 ) 0 );
+                    break;
+                }
+
                 Scheduler::put_to_sleep ( TCB::running, time_to_sleep );
                 TCB::yield ();
 

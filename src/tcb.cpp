@@ -17,7 +17,7 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
         this->stack = ( uint64* ) stack_space;
 
         this->context.ra = ( uint64 ) &wrapper; // set inital ret addr to wrapper function
-        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE ); 
+        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE - 96 );
 
         Scheduler::put ( this );
     }
@@ -60,7 +60,9 @@ void TCB::finish () {
 
 void TCB::wrapper () {
     // clear spp and spie, return to U-mode
-    pop_spp_spie (); 
+    pop_spp_spie ();
+
+    TCB::cpu_time = 0; // reset the cpu time for new thread
 
     // run thred body with given arg
     TCB::running->body ( TCB::running->arg );
