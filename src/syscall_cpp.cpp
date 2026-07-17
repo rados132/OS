@@ -34,8 +34,8 @@ void Thread::dispatch () {
     thread_dispatch ();
 }
 
-int Thread::sleep ( time_t ) {
-    return 0;
+int Thread::sleep ( time_t time ) {
+    return time_sleep ( time );
 }
 
 PeriodicThread::PeriodicThread ( time_t period )

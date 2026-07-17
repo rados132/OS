@@ -11,7 +11,7 @@ TCB*   TCB::dying    = nullptr;
 time_t TCB::cpu_time = 0;
 
 TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
-    : body( t_body ), arg( arg ), stack( nullptr ), next( nullptr ), finished( false )
+    : body( t_body ), arg( arg ), stack( nullptr ), next( nullptr ), finished( false ), sleep_time( 0 )
 { 
     if ( body != nullptr ) {
         this->stack = ( uint64* ) stack_space;
@@ -32,15 +32,15 @@ TCB::~TCB () {
 void TCB::yield () {
     TCB* curr = TCB::running;
 
-    if ( !curr->finished && !curr->sem.blocked )
+    if ( !curr->finished && !curr->sem.blocked && curr->sleep_time == 0 )
         Scheduler::put ( curr );
 
     TCB::running = Scheduler::get ();
 
     context_switch ( &curr->context, &running->context );
 
-    /* if previous thread was dying delete it */
     if ( TCB::dying ) {
+        /* if previous thread was dying delete it */
         delete TCB::dying;
         TCB::dying = nullptr;
     }

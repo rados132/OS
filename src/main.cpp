@@ -2,7 +2,7 @@
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/riscv.hpp"
 #include "../inc/syscall_c.hpp"
-#include "../inc/TCB.hpp"
+#include "../inc/tcb.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
 

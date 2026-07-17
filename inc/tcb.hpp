@@ -47,6 +47,8 @@ private:
     
     bool         finished;   // is thread finished
 
+    time_t       sleep_time; // how long will thread sleep
+
     SemInfo      sem;        // semaphore info for synchronization
 
     static TCB*  dying;      // pointer to dying thread

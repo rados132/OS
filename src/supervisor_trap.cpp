@@ -3,7 +3,8 @@
 #include "../inc/riscv.hpp"
 #include "../inc/syscall_c.hpp"
 #include "../inc/MemoryAllocator.hpp"
-#include "../inc/TCB.hpp"
+#include "../inc/tcb.hpp"
+#include "../inc/scheduler.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
 
@@ -69,6 +70,16 @@ extern "C" void supervisor_trap_handler () {
 
             case THREAD_DISPATCH: {
                 TCB::yield ();
+                break;
+            }
+
+            case TIME_SLEEP: {
+                time_t time_to_sleep = ( time_t ) TrapFrame::r_user_reg ( A1 );
+
+                Scheduler::put_to_sleep ( TCB::running, time_to_sleep );
+                TCB::yield ();
+
+                TrapFrame::w_user_reg ( A0, ( uint64 ) 0 );
                 break;
             }
 
@@ -165,10 +176,6 @@ extern "C" void supervisor_trap_handler () {
                 break;
             }
 
-            case TIME_SLEEP: {
-                break; // not implemented
-            }
-
             case CONSOLE_GETC: {
                 char c = __getc ();
                 TrapFrame::w_user_reg ( A0, ( uint64 ) c );
@@ -208,18 +215,21 @@ extern "C" void supervisor_trap_handler () {
 }
 
 extern "C" void timer_interrupt_handler () {
-    // save pc and status regs
+    /* save pc and status regs */
     volatile uint64 sepc    = CSR::r_sepc    ();
     volatile uint64 sstatus = CSR::r_sstatus ();
 
-    // clear timer interrupt
-    CSR::mc_sip ( CSR::SIP_SSIP );
+    CSR::mc_sip ( CSR::SIP_SSIP ); // clear timer interrupt
 
+    /* update sleeping threads */
+    Scheduler::update_sleeping ();
+
+    /* yield if current thread has exceeded its time slice */
     if ( ++TCB::cpu_time >= DEFAULT_TIME_SLICE ) {
         TCB::yield ();
     }
 
-    // restore pc and status regs
+    /* restore pc and status regs */
     CSR::w_sepc    ( sepc );
     CSR::w_sstatus ( sstatus );
 }

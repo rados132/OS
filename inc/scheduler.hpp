@@ -1,6 +1,8 @@
 #ifndef SCHEDULER_HPP
 #define SCHEDULER_HPP
 
+#include "../lib/hw.h"
+
 class TCB;
 
 class Scheduler {
@@ -9,9 +11,14 @@ public:
 
     static TCB* get ();
 
+    static void put_to_sleep ( TCB* tcb, time_t time_to_sleep );
+
+    static void update_sleeping ();
+
 private:
-    static TCB* tcb_list_head;
-    static TCB* tcb_list_tail;
+    static TCB* ready_queue_head;
+    static TCB* ready_queue_tail;
+    static TCB* sleeping_queue;
 };
 
 #endif
