@@ -17,7 +17,7 @@ TCB::TCB ( thread_body t_body, void* arg, void* stack_space )
         this->stack = ( uint64* ) stack_space;
 
         this->context.ra = ( uint64 ) &wrapper; // set inital ret addr to wrapper function
-        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE - 96 );
+        this->context.sp = ( uint64 ) (( char* ) stack_space + DEFAULT_STACK_SIZE );
 
         Scheduler::put ( this );
     }
@@ -39,8 +39,8 @@ void TCB::yield () {
 
     context_switch ( &curr->context, &running->context );
 
+    /* if previous thread was dying delete it */
     if ( TCB::dying ) {
-        /* if previous thread was dying delete it */
         delete TCB::dying;
         TCB::dying = nullptr;
     }
