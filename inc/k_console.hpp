@@ -5,7 +5,7 @@
 #include "../inc/bounded_buffer.hpp"
 #include "../inc/KSemaphore.hpp"
 
-typedef uint8* p_reg;
+typedef volatile uint8* p_reg;
 
 class KConsole {
 public:
@@ -17,7 +17,8 @@ protected:
 
 private:
     static BoundedBuffer* out_buffer;
-    static KSemaphore* out_item_available;
+    static KSemaphore*    out_item_available;
+    static KSemaphore*    out_space_available;
 };
 
 #endif
