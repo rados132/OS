@@ -12,6 +12,7 @@ extern void userMain ();
 
 static void idle_body         ( void* );
 static void user_main_wrapper ( void* );
+static void writer_body       ( void* );
 
 volatile static bool user_main_done = false;
 
@@ -32,6 +33,9 @@ void main () {
     void* user_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
     new TCB ( &user_main_wrapper, nullptr, user_stack );
 
+    void* writer_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
+    new TCB ( &writer_body, nullptr, writer_stack, true );
+
     while ( !user_main_done ) thread_dispatch (); // wait for user thread to finish
 
     print_str ( "\nKernel shutting down\n\n" );
@@ -48,4 +52,16 @@ static void idle_body ( void* ) {
 static void user_main_wrapper ( void* ) {
     userMain ();
     user_main_done = true;
+}
+
+static void writer_body ( void* ) {
+    typedef uint8* preg;
+    
+    preg console_status  = ( preg ) CONSOLE_STATUS;
+    preg console_tx_data = ( preg ) CONSOLE_TX_DATA;
+
+    while ( true ) {
+        while ( !( *console_status & CONSOLE_TX_STATUS_BIT ) );
+        *console_tx_data = 'W';
+    }
 }

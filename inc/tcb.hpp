@@ -30,7 +30,7 @@ typedef void ( *thread_body ) ( void* );
 
 class TCB {
 public:
-    TCB ( thread_body t_body = 0, void* arg = 0, void* stack_space = 0 );
+    TCB ( thread_body t_body = 0, void* arg = 0, void* stack_space = 0, bool priveleged = false );
    ~TCB ();
 
     static void  yield  (); // allow other thread to execute
@@ -41,19 +41,20 @@ public:
 
     static time_t cpu_time; // for how long did current thread had the cpu
     
-    void* operator new      ( size_t size ) noexcept;
-    void  operator delete   ( void* ptr );
+    void* operator new    ( size_t size ) noexcept;
+    void  operator delete ( void* ptr );
     
 protected:
-    static void  wrapper ();
+    static void  user_wrapper       (); // user thread wrapper
+    static void  privileged_wrapper (); // kernel thread wrapper
 
 private:
     thread_body  body;       // routine to be executed by the thread
     void*        arg;        // argument passed to routine
 
-    Context      context;    // thread's context
-
     uint64*      stack;      // stack memory start addr, aligned to 16B
+
+    Context      context;    // thread's context
 
     TCB*         next;       // points to next thread in list
     
