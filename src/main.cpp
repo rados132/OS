@@ -5,13 +5,14 @@
 #include "../inc/tcb.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
+#include "../inc/k_console.hpp"
 
 extern "C" void trap_handler ();
 
 extern void userMain ();
 
 static void idle_body         ( void* );
-static void user_main_wrapper ( void* );
+// static void user_main_wrapper ( void* );
 static void writer_body       ( void* );
 
 volatile static bool user_main_done = false;
@@ -25,16 +26,18 @@ void main () {
 
     TCB::running = new TCB (); // initialize the main thread
 
+    KConsole::init (); // initialize console writer thread
+
     // initialize idle thread
     void* idle_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
     new TCB ( &idle_body, nullptr, idle_stack );
 
     // initialize user thread
-    void* user_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
-    new TCB ( &user_main_wrapper, nullptr, user_stack );
+    // void* user_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
+    // new TCB ( &user_main_wrapper, nullptr, user_stack );
 
     void* writer_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
-    new TCB ( &writer_body, nullptr, writer_stack, true );
+    new TCB ( &writer_body, nullptr, writer_stack );
 
     while ( !user_main_done ) thread_dispatch (); // wait for user thread to finish
 
@@ -49,19 +52,11 @@ static void idle_body ( void* ) {
     }
 }
 
-static void user_main_wrapper ( void* ) {
-    userMain ();
-    user_main_done = true;
-}
+// static void user_main_wrapper ( void* ) {
+//     userMain ();
+//     user_main_done = true;
+// }
 
 static void writer_body ( void* ) {
-    typedef uint8* preg;
-    
-    preg console_status  = ( preg ) CONSOLE_STATUS;
-    preg console_tx_data = ( preg ) CONSOLE_TX_DATA;
-
-    while ( true ) {
-        while ( !( *console_status & CONSOLE_TX_STATUS_BIT ) );
-        *console_tx_data = 'W';
-    }
+    while ( true ) putc ( 'W' );
 }

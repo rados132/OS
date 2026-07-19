@@ -7,6 +7,7 @@
 #include "../inc/scheduler.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
+#include "../inc/k_console.hpp"
 
 extern "C" void supervisor_trap_handler () {
     
@@ -189,7 +190,8 @@ extern "C" void supervisor_trap_handler () {
 
             case CONSOLE_PUTC: {
                 char c = ( char ) TrapFrame::r_user_reg ( A1 );
-                __putc ( c );
+                // __putc ( c );
+                KConsole::putc ( c );
                 break;
             }
 
@@ -240,5 +242,8 @@ extern "C" void timer_interrupt_handler () {
 }
 
 extern "C" void console_interrupt_handler () {
-    console_handler ();
+    // console_handler ();
+    int irq = plic_claim ();
+    if ( irq == CONSOLE_IRQ )
+        plic_complete ( irq );
 }

@@ -9,8 +9,8 @@ class BoundedBuffer {
 public:
     BoundedBuffer ();
 
-    bool put ( char c );
-    bool get ( char* c );
+    int put ( char c );
+    int get ( char* c );
 
     bool full  () const;
     bool empty () const;

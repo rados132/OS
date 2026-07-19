@@ -7,8 +7,8 @@ class TCB;
 
 class KSemaphore {
 public:
-     KSemaphore ( unsigned permits = 1 );
-    ~KSemaphore ();
+    KSemaphore ( unsigned permits = 1 );
+   ~KSemaphore ();
 
     int wait    ( unsigned n = 1 );
     int signal  ( unsigned n = 1 );
