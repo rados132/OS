@@ -1,8 +1,8 @@
 #include "../inc/printing.hpp"
-#include "../lib/console.h"
+#include "../inc/syscall_c.hpp"
 
 void print_str ( char const* string ) {
-    while ( *string ) __putc ( *string++ );
+    while ( *string ) putc ( *string++ );
 }
 
 void print_int (int xx, int base, int sgn ) {
@@ -24,9 +24,9 @@ void print_int (int xx, int base, int sgn ) {
     if ( sgn && xx < 0 ) buf[i++] = '-';
 
     if ( base == 16 ) {
-        __putc ( '0' );
-        __putc ( 'x' );
+        putc ( '0' );
+        putc ( 'x' );
     }
 
-    while ( --i >= 0 ) __putc ( buf[i] );
+    while ( --i >= 0 ) putc ( buf[i] );
 }

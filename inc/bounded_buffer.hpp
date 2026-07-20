@@ -9,14 +9,14 @@ class BoundedBuffer {
 public:
     BoundedBuffer ();
 
-    int put ( char c );
-    int get ( char* c );
+    int put ( char c );  // not thread-safe
+    int get ( char* c ); // not thread-safe
 
     bool full  () const;
     bool empty () const;
 
 private:
-    char data[BUFFER_SIZE];
+    char   data[BUFFER_SIZE];
     size_t head, tail, count;
 };
 

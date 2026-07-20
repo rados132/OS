@@ -143,6 +143,14 @@ inline void CSR::w_sscratch (uint64 sscratch) {
     __asm__ volatile ("csrw sscratch, %[sscratch]" : : [sscratch] "r"(sscratch));
 }
 
+inline void mask_interrupts () {
+    CSR::mc_sstatus ( CSR::SSTATUS_SIE );
+}
+
+inline void unmask_interrupts () {
+    CSR::ms_sstatus ( CSR::SSTATUS_SIE );
+}
+
 enum UserRegs {
     ZERO = 0,
     RA = 1,

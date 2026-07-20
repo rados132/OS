@@ -183,15 +183,14 @@ extern "C" void supervisor_trap_handler () {
             }
 
             case CONSOLE_GETC: {
-                char c = __getc ();
+                char c = KConsole::getc ();
                 TrapFrame::w_user_reg ( A0, ( uint64 ) c );
                 break;
             }
 
             case CONSOLE_PUTC: {
                 char c = ( char ) TrapFrame::r_user_reg ( A1 );
-                // __putc ( c );
-                KConsole::putc ( c );
+                KConsole::putc_out ( c );
                 break;
             }
 
@@ -203,6 +202,8 @@ extern "C" void supervisor_trap_handler () {
                 print_str ( " stval=" );      print_int ( CSR::r_stval () );
                 print_str ( "\n" );
 
+                KConsole::flush_out_buffer (); // flush the console output buffer
+
                 *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
             }
         }
@@ -213,6 +214,8 @@ extern "C" void supervisor_trap_handler () {
         print_str ( " sepc=" );       print_int ( sepc, 16 );
         print_str ( " stval=" );      print_int ( CSR::r_stval () );
         print_str ( "\n" );
+
+        KConsole::flush_out_buffer (); // flush the console output buffer
 
         *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
     }
@@ -242,8 +245,31 @@ extern "C" void timer_interrupt_handler () {
 }
 
 extern "C" void console_interrupt_handler () {
-    // console_handler ();
+    /* check if external irq is from console */
     int irq = plic_claim ();
+
     if ( irq == CONSOLE_IRQ )
         plic_complete ( irq );
+    else {
+        print_str ( "Error: unknown interrupt\n" );
+        print_str ( "TRAP scause=" ); print_int ( CSR::r_scause () );
+        print_str ( " sepc=" );       print_int ( CSR::r_sepc (), 16 );
+        print_str ( " stval=" );      print_int ( CSR::r_stval () );
+        print_str ( "\n" );
+
+        KConsole::flush_out_buffer (); // flush the console output buffer
+
+        *( ( uint32* ) 0x100000 ) = 0x5555; // halt the emulator
+    }
+
+    p_reg console_status  = ( p_reg ) CONSOLE_STATUS;
+    p_reg console_rx_data = ( p_reg ) CONSOLE_RX_DATA;
+
+    uint8 max_chars = 8;
+    char c;
+    while ( ( *console_status & CONSOLE_RX_STATUS_BIT ) && max_chars-- ) {
+        c = ( char ) *console_rx_data;
+        int full = KConsole::putc_in ( c );
+        if ( full ) break;
+    }
 }
