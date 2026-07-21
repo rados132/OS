@@ -245,11 +245,11 @@ extern "C" void timer_interrupt_handler () {
 }
 
 extern "C" void console_interrupt_handler () {
-    /* check if external irq is from console */
-    int irq = plic_claim ();
+
+    int irq = plic_claim (); // accept irq
 
     if ( irq == CONSOLE_IRQ )
-        plic_complete ( irq );
+        plic_complete ( irq ); // if irq is from console mark it as served
     else {
         print_str ( "Error: unknown interrupt\n" );
         print_str ( "TRAP scause=" ); print_int ( CSR::r_scause () );

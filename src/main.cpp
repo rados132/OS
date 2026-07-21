@@ -14,9 +14,6 @@ extern void userMain ();
 static void idle_body         ( void* );
 static void user_main_wrapper ( void* );
 
-// static void writer_body       ( void* );
-// static void echo_body ( void* );
-
 volatile static bool user_main_done = false;
 
 void main () {
@@ -38,12 +35,6 @@ void main () {
     void* user_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
     new TCB ( &user_main_wrapper, nullptr, user_stack );
 
-    // void* writer_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
-    // new TCB ( &writer_body, nullptr, writer_stack );
-
-    // void* echo_stack = MemoryAllocator::kmalloc ( DEFAULT_STACK_SIZE );
-    // new TCB ( &echo_body, nullptr, echo_stack );
-
     while ( !user_main_done ) thread_dispatch (); // wait for user thread to finish
 
     print_str ( "\nKernel shutting down\n\n" );
@@ -63,17 +54,3 @@ static void user_main_wrapper ( void* ) {
     userMain ();
     user_main_done = true;
 }
-
-// static void writer_body ( void* ) {
-    
-//     const char* buffer_test_string = "7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM&kKjJhHgGfFdDsSaApPoOiIuUyYtTrReEwWqQ1m9$Kj2!vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnNmM7xN!k9$mQ2vWbYuR4zZpA5&sE8tD1iO3oC6xXvVbBnN";
-
-//     while ( true ) print_str ( buffer_test_string );
-// }
-
-// static void echo_body ( void* ) {
-//     while ( true ) {
-//         char c = getc ();
-//         putc ( c );
-//     }
-// }
