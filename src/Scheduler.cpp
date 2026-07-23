@@ -1,5 +1,5 @@
-#include "../inc/scheduler.hpp"
-#include "../inc/tcb.hpp"
+#include "../inc/Scheduler.hpp"
+#include "../inc/TCB.hpp"
 
 TCB* Scheduler::ready_queue_head = nullptr;
 TCB* Scheduler::ready_queue_tail = nullptr;

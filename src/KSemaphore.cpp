@@ -1,7 +1,7 @@
 #include "../inc/KSemaphore.hpp"
 #include "../inc/MemoryAllocator.hpp"
-#include "../inc/tcb.hpp"
-#include "../inc/scheduler.hpp"
+#include "../inc/TCB.hpp"
+#include "../inc/Scheduler.hpp"
 #include "../inc/syscall_c.hpp"
 
 KSemaphore::KSemaphore ( unsigned permits )

@@ -1,8 +1,8 @@
 #ifndef K_CONSOLE_HPP
 #define K_CONSOLE_HPP
 
-#include "../inc/tcb.hpp"
-#include "../inc/bounded_buffer.hpp"
+#include "../inc/TCB.hpp"
+#include "../inc/BoundedBuffer.hpp"
 #include "../inc/KSemaphore.hpp"
 
 typedef volatile uint8* p_reg;

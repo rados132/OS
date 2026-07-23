@@ -15,6 +15,9 @@ public:
     bool full  () const;
     bool empty () const;
 
+    void* operator new    ( size_t size ) noexcept;
+    void  operator delete ( void* ptr );
+
 private:
     char   data[BUFFER_SIZE];
     size_t head, tail, count;

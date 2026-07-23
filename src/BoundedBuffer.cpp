@@ -1,4 +1,5 @@
-#include "../inc/bounded_buffer.hpp"
+#include "../inc/BoundedBuffer.hpp"
+#include "../inc/MemoryAllocator.hpp"
 
 BoundedBuffer::BoundedBuffer () : head( 0 ), tail( 0 ), count( 0 )
 {
@@ -30,4 +31,12 @@ bool BoundedBuffer::full () const {
 
 bool BoundedBuffer::empty () const {
     return count == 0;
+}
+
+void* BoundedBuffer::operator new ( size_t size ) noexcept {
+    return MemoryAllocator::kmalloc ( size );
+}
+
+void BoundedBuffer::operator delete ( void* ptr ) {
+    MemoryAllocator::kfree ( ptr );
 }

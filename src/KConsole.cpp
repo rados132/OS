@@ -1,4 +1,4 @@
-#include "../inc/k_console.hpp"
+#include "../inc/KConsole.hpp"
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/riscv.hpp"
 

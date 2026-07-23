@@ -2,10 +2,10 @@
 #include "../inc/MemoryAllocator.hpp"
 #include "../inc/riscv.hpp"
 #include "../inc/syscall_c.hpp"
-#include "../inc/tcb.hpp"
+#include "../inc/TCB.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
-#include "../inc/k_console.hpp"
+#include "../inc/KConsole.hpp"
 
 extern "C" void trap_handler ();
 

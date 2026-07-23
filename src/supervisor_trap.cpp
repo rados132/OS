@@ -3,11 +3,11 @@
 #include "../inc/riscv.hpp"
 #include "../inc/syscall_c.hpp"
 #include "../inc/MemoryAllocator.hpp"
-#include "../inc/tcb.hpp"
-#include "../inc/scheduler.hpp"
+#include "../inc/TCB.hpp"
+#include "../inc/Scheduler.hpp"
 #include "../inc/KSemaphore.hpp"
 #include "../inc/printing.hpp"
-#include "../inc/k_console.hpp"
+#include "../inc/KConsole.hpp"
 
 extern "C" void supervisor_trap_handler () {
     
