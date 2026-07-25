@@ -56,7 +56,7 @@ private:
 
     Context      context;    // thread's context
 
-    TCB*         next;       // points to next thread in list
+    TCB*         next;       // for linking in intruisive list
     
     bool         finished;   // is thread finished
 
