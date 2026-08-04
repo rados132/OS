@@ -1,6 +1,6 @@
 # Context switch
 #
-#  void context_switch ( Context* ctx_old, Context* ctx_new );
+# void context_switch ( Context* ctx_old, Context* ctx_new );
 #
 # Save the current context in ctx_old and load the new context from ctx_new.
 

@@ -76,7 +76,7 @@ void TCB::user_wrapper () {
 void TCB::privileged_wrapper () {
     TCB::cpu_time = 0; // reset the cpu time for new thread
 
-    CSR::ms_sstatus ( CSR::SSTATUS_SIE ); // enable interrupts
+    unmask_interrupts (); // enable interrupts
 
     // run thread body with given arg
     TCB::running->body ( TCB::running->arg );

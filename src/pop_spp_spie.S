@@ -1,3 +1,7 @@
+# void pop_spp_spie ();
+#
+# Helper function used to return from kernel to user mode and enable interrupts
+
 .global pop_spp_spie
 pop_spp_spie:
     csrw sepc, ra     # savedpc <- retaddr

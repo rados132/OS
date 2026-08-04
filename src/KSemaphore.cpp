@@ -56,7 +56,8 @@ void KSemaphore::block () {
 
     enqueue ( TCB::running );
 
-    thread_dispatch ();
+    // thread_dispatch ();
+    TCB::yield ();
 }
 
 void KSemaphore::unblock () {
